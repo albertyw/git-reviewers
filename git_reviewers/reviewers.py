@@ -1,16 +1,13 @@
 #!/usr/bin/env python3
 
-try:
-    import configparser
-except ImportError:
-    raise ImportError("Must be using Python 3")
-
 import argparse
-import os
 import subprocess
+import sys
 
+if sys.version_info < (3, 0):
+    raise SystemError("Must be using Python 3")
 
-UBER=True
+UBER = True
 
 
 def extract_username(shortlog):
@@ -38,11 +35,12 @@ def get_reviewers():
 def show_reviewers(reviewers):
     print(", ".join(reviewers))
 
+
 def main():
     description = "Suggest reviewers for your diff.\n"
     description += "https://github.com/albertyw/git-reviewers"
     parser = argparse.ArgumentParser(description=description)
-    args = parser.parse_args()
+    parser.parse_args()
 
     reviewers = get_reviewers()
     show_reviewers(reviewers)
