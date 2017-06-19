@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import argparse
+import os
 import subprocess
 import sys
 
@@ -8,6 +9,16 @@ if sys.version_info < (3, 0): # NOQA pragma: no cover
     raise SystemError("Must be using Python 3")
 
 UBER = True
+
+
+def get_changed_files():
+    git_diff_files_command = ['git', 'diff-files']
+    process = subprocess.run(git_diff_files_command, stdout=subprocess.PIPE)
+    git_diff_files = process.stdout.decode("utf-8")
+    files = git_diff_files.split("\n")
+    files = [x.split("\t")[-1].strip() for x in files]
+    files = [x for x in files if x]
+    return files
 
 
 def extract_username(shortlog):
@@ -22,7 +33,8 @@ def extract_username(shortlog):
     return email
 
 
-def get_reviewers():
+def get_reviewers(path, changed_files):
+    path = os.path.join(os.getcwd(), path)
     reviewers = []
     git_shortlog_command = ['git', 'shortlog', '-sne']
     process = subprocess.run(git_shortlog_command, stdout=subprocess.PIPE)
@@ -40,9 +52,15 @@ def main():
     description = "Suggest reviewers for your diff.\n"
     description += "https://github.com/albertyw/git-reviewers"
     parser = argparse.ArgumentParser(description=description)
-    parser.parse_args()
+    parser.add_argument(
+        '--path',
+        default='',
+        help='relative path to the current git repository'
+    )
+    args = parser.parse_args()
 
-    reviewers = get_reviewers()
+    changed_files = get_changed_files()
+    reviewers = get_reviewers(args.path, changed_files)
     show_reviewers(reviewers)
 
 

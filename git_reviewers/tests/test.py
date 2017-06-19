@@ -8,6 +8,22 @@ directory = os.path.dirname(os.path.realpath(__file__))
 BASE_DIRECTORY = os.path.normpath(os.path.join(directory, '..', '..'))
 
 
+class TestGetChangedFiles(unittest.TestCase):
+    @patch('subprocess.run')
+    def test_gets_diff_files(self, mock_run):
+        process = MagicMock()
+        output = b':100644 100644 f1a6032222525ced9d1db7aa87f7956948f9ef98 '
+        output += b'0000000000000000000000000000000000000000 M\tREADME.md\n'
+        output += b':100755 100755 02fbb893bcd9c7f3adfe36b48de0113336a1b209 '
+        output += b'0000000000000000000000000000000000000000 M\t'
+        output += b'git_reviewers/reviewers.py'
+        process.stdout = output
+        mock_run.return_value = process
+        diff_files = reviewers.get_changed_files()
+        expected = ['README.md', 'git_reviewers/reviewers.py']
+        self.assertEqual(diff_files, expected)
+
+
 class TestExtractUsername(unittest.TestCase):
     def setUp(self):
         reviewers.UBER = True
@@ -32,12 +48,14 @@ class TestExtractUsername(unittest.TestCase):
 class TestGetReviewers(unittest.TestCase):
     @patch('subprocess.run')
     def test_gets_reviewers(self, mock_run):
+        path = ''
+        changed_files = []
         process = MagicMock()
         git_shortlog = b'     3\tAlbert Wang <albertyw@uber.com>\n'
         git_shortlog += b'3\tAlbert Wang <a@example.com>\n'
         process.stdout = git_shortlog
         mock_run.return_value = process
-        users = reviewers.get_reviewers()
+        users = reviewers.get_reviewers(path, changed_files)
         self.assertEqual(users, ['albertyw'])
 
 
