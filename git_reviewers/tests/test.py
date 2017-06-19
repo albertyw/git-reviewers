@@ -46,3 +46,11 @@ class TestShowReviewers(unittest.TestCase):
     def test_show_reviewers(self, mock_print):
         reviewers.show_reviewers(['albertyw', 'asdf'])
         mock_print.assert_called_with('albertyw, asdf')
+
+
+class TestMain(unittest.TestCase):
+    @patch('builtins.print')
+    @patch('argparse.ArgumentParser')
+    def test_main(self, mock_argparse, mock_print):
+        reviewers.main()
+        self.assertTrue(mock_print.called)

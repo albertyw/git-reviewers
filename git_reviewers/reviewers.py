@@ -4,7 +4,7 @@ import argparse
 import subprocess
 import sys
 
-if sys.version_info < (3, 0):
+if sys.version_info < (3, 0): # NOQA pragma: no cover
     raise SystemError("Must be using Python 3")
 
 UBER = True
