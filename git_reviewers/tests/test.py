@@ -70,5 +70,6 @@ class TestMain(unittest.TestCase):
     @patch('builtins.print')
     @patch('argparse.ArgumentParser')
     def test_main(self, mock_argparse, mock_print):
+        mock_argparse().parse_args().path = ""
         reviewers.main()
         self.assertTrue(mock_print.called)
