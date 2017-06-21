@@ -6,3 +6,23 @@
 [![Test Coverage](https://codeclimate.com/github/albertyw/git-reviewers/badges/coverage.svg)](https://codeclimate.com/github/albertyw/git-reviewers/coverage)
 
 Tool to suggest code reviewers for your code depending on your diff
+
+Development
+-----------
+
+```bash
+pip install -r requirements-test.txt
+coverage run setup.py test
+coverage report
+flake8
+```
+
+Publishing
+----------
+
+```bash
+sudo apt-get install pandoc
+pip install twine pypandoc
+python setup.py sdist bdist_wheel
+twine upload dist/*
+```
