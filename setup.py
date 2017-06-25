@@ -16,7 +16,7 @@ except ImportError:
 setup(
     name='git-reviewers',
 
-    version='0.0.2',
+    version='0.1.0',
 
     description='Suggest reviewers for your git branch',
     long_description=long_description,
