@@ -49,6 +49,7 @@ def show_reviewers(reviewers):
 
 
 def main():
+    global UBER
     description = "Suggest reviewers for your diff.\n"
     description += "https://github.com/albertyw/git-reviewers"
     parser = argparse.ArgumentParser(description=description)
