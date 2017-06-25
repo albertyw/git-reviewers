@@ -50,14 +50,14 @@ class TestGetReviewers(unittest.TestCase):
     @patch('subprocess.run')
     def test_gets_reviewers(self, mock_run):
         path = ''
-        changed_files = []
+        changed_files = ['README.md']
         process = MagicMock()
         git_shortlog = b'     3\tAlbert Wang <albertyw@uber.com>\n'
         git_shortlog += b'3\tAlbert Wang <a@example.com>\n'
         process.stdout = git_shortlog
         mock_run.return_value = process
         users = reviewers.get_reviewers(path, changed_files)
-        self.assertEqual(users, ['albertyw'])
+        self.assertEqual(users, set(['albertyw']))
 
 
 class TestShowReviewers(unittest.TestCase):
