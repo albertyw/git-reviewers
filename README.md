@@ -14,12 +14,26 @@ Tool to suggest code reviewers for your code depending on your diff
 Installation
 ------------
 
-You need to first clone this repository somewhere on your system (perhaps in your dotfiles) repository.
+You need to first clone this repository somewhere on your system (perhaps in
+your [dotfiles](https://github.com/albertyw/dotfiles)) repository.
 
+```bash
 git clone git@github.com:albertyw/git-reviewers $REPOSITORY_LOCATION
 git config --global \
     alias.reviewers \
         "!"$REPOSITORY_LOCATION"/git_reviewers/reviewers.py --path=\${GIT_PREFIX:-./}"
+```
+
+Usage
+-----
+
+```
+Usage: git reviewers [-h] [--path PATH] [--uber]
+```
+
+If `--path` is called, then its value is be used to compute the relative path to the current git repository
+If `--uber` is called, then the reviewers lookup and output will be compatible with Uber
+
 
 Development
 -----------
