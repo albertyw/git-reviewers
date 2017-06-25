@@ -35,12 +35,14 @@ def extract_username(shortlog):
 
 def get_reviewers(path, changed_files):
     path = os.path.join(os.getcwd(), path)
-    reviewers = []
-    git_shortlog_command = ['git', 'shortlog', '-sne']
-    process = subprocess.run(git_shortlog_command, stdout=subprocess.PIPE)
-    git_shortlog = process.stdout.decode("utf-8").split("\n")
-    reviewers = [extract_username(shortlog) for shortlog in git_shortlog]
-    reviewers = [username for username in reviewers if username]
+    reviewers = set()
+    for changed in changed_files:
+        git_shortlog_command = ['git', 'shortlog', '-sne', changed]
+        process = subprocess.run(git_shortlog_command, stdout=subprocess.PIPE)
+        git_shortlog = process.stdout.decode("utf-8").split("\n")
+        users = [extract_username(shortlog) for shortlog in git_shortlog]
+        users = [username for username in users if username]
+        reviewers = reviewers.union(users)
     return reviewers
 
 
