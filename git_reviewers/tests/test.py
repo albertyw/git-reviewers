@@ -26,20 +26,21 @@ class TestGetChangedFiles(unittest.TestCase):
 
 class TestExtractUsername(unittest.TestCase):
     def setUp(self):
-        reviewers.UBER = True
+        reviewers.UBER = False
 
     def test_gets_emails(self):
-        reviewers.UBER = False
         shortlog = '     3\tAlbert Wang <a@example.com>\n'
         email = reviewers.extract_username(shortlog)
         self.assertEqual(email, 'a@example.com')
 
     def test_excludes_non_uber_emails(self):
+        reviewers.UBER = True
         shortlog = '     3\tAlbert Wang <a@example.com>\n'
         email = reviewers.extract_username(shortlog)
         self.assertEqual(email, None)
 
     def test_gets_uber_emails(self):
+        reviewers.UBER = True
         shortlog = '     3\tAlbert Wang <albertyw@uber.com>\n'
         email = reviewers.extract_username(shortlog)
         self.assertEqual(email, 'albertyw')

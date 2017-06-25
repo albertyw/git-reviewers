@@ -8,7 +8,7 @@ import sys
 if sys.version_info < (3, 0): # NOQA pragma: no cover
     raise SystemError("Must be using Python 3")
 
-UBER = True
+UBER = False
 
 
 def get_changed_files():
@@ -57,7 +57,13 @@ def main():
         default='',
         help='relative path to the current git repository'
     )
+    parser.add_argument(
+        '--uber',
+        action="store_true",
+        help='output reviewers list to work with uber repositories'
+    )
     args = parser.parse_args()
+    UBER = args.uber
 
     changed_files = get_changed_files()
     reviewers = get_reviewers(args.path, changed_files)
