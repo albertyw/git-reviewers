@@ -11,15 +11,9 @@ Tool to suggest code reviewers for your code depending on your diff
 Installation
 ------------
 
-You need to first clone this repository somewhere on your system
-(perhaps in your `dotfiles`_) repository.
-
-.. code:: bash
-
-    git clone git@github.com:albertyw/git-reviewers $REPOSITORY_LOCATION
-    git config --global \
-        alias.reviewers \
-            "!"$REPOSITORY_LOCATION"/git_reviewers/reviewers.py --path=\${GIT_PREFIX:-./}"
+First clone this repository to somewhere on your system
+(perhaps in your `dotfiles <https://github.com/albertyw/dotfiles>`__
+repository), then run ``<REPOSITORY_LOCATION>/install.sh``.
 
 Usage
 -----
