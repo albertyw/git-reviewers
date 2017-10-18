@@ -1,6 +1,12 @@
 CHANGELOG.md
 ============
 
+v0.1.1 (2017-10-17)
+-------------------
+
+ - Reformat README to RST
+ - Add installation script
+
 
 v0.1.0 (2017-06-24)
 -------------------
