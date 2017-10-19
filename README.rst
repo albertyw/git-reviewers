@@ -41,7 +41,6 @@ Publishing
 
 .. code:: bash
 
-    sudo apt-get install pandoc
     pip install twine
     python setup.py sdist bdist_wheel
     twine upload dist/*
