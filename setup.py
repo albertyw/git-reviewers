@@ -1,25 +1,35 @@
-# Always prefer setuptools over distutils
-from setuptools import setup, find_packages
-from codecs import open
-from os import path
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
-here = path.abspath(path.dirname(__file__))
-with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
+import os
+
+from setuptools import find_packages, setup
+
+from git_reviewers import reviewers
+
+here = os.path.abspath(os.path.dirname(__file__))
+with open(os.path.join(here, 'README.rst'), encoding='utf-8') as f:
     long_description = f.read()
 
+# Package meta-data.
+NAME = 'git-reviewers'
+DESCRIPTION = 'Suggest reviewers for your git branch',
+URL = 'https://github.com/albertyw/git-reviewers'
+EMAIL = 'git@albertyw.com'
+AUTHOR = 'Albert Wang'
+
+
+# Where the magic happens:
 setup(
-    name='git-reviewers',
-
-    version='0.1.1',
-
-    description='Suggest reviewers for your git branch',
+    name=NAME,
+    version=reviewers.__version__,
+    description=DESCRIPTION,
     long_description=long_description,
+    author=AUTHOR,
+    author_email=EMAIL,
+    url=URL,
 
-    url='https://github.com/albertyw/git-reviewers',
-
-    author='Albert Wang',
-    author_email='git@albertyw.com',
-
+    include_package_data=True,
     license='MIT',
 
     classifiers=[
@@ -39,6 +49,9 @@ setup(
     ],
 
     keywords='git code review reviewer log history',
+
+    # $ setup.py publish support.
+    cmdclass={},
 
     packages=find_packages("git_reviewers", exclude=["tests"]),
 
