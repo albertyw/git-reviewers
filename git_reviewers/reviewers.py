@@ -44,7 +44,8 @@ class FindLogReviewers(FindReviewers):
         files = [x for x in files if x]
         return files
 
-    def get_reviewers(self, changed_files):
+    def get_reviewers(self):
+        changed_files = self.get_changed_files()
         reviewers = set()
         for changed in changed_files:
             git_shortlog_command = ['git', 'shortlog', '-sne', changed]
@@ -79,8 +80,7 @@ def main():
     UBER = args.uber
 
     finder = FindLogReviewers()
-    changed_files = finder.get_changed_files()
-    reviewers = finder.get_reviewers(changed_files)
+    reviewers = finder.get_reviewers()
     show_reviewers(reviewers)
 
 

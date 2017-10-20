@@ -57,12 +57,13 @@ class TestFindLogReviewers(unittest.TestCase):
     def test_gets_reviewers(self, mock_run):
         reviewers.UBER = True
         changed_files = ['README.rst']
+        self.finder.get_changed_files = MagicMock(return_value=changed_files)
         process = MagicMock()
         git_shortlog = b'     3\tAlbert Wang <albertyw@uber.com>\n'
         git_shortlog += b'3\tAlbert Wang <a@example.com>\n'
         process.stdout = git_shortlog
         mock_run.return_value = process
-        users = self.finder.get_reviewers(changed_files)
+        users = self.finder.get_reviewers()
         self.assertEqual(users, set(['albertyw']))
 
 
