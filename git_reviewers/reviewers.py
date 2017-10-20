@@ -50,7 +50,11 @@ class FindLogReviewers(FindReviewers):
         for changed in changed_files:
             git_shortlog_command = ['git', 'shortlog', '-sne', changed]
             git_shortlog = self.run_command(git_shortlog_command).split("\n")
-            users = [self.extract_username_from_shortlog(shortlog) for shortlog in git_shortlog]
+            users = [
+                self.extract_username_from_shortlog(shortlog)
+                for shortlog
+                in git_shortlog
+            ]
             users = [username for username in users if username]
             reviewers = reviewers.union(users)
         return reviewers
