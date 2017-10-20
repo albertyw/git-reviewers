@@ -51,7 +51,7 @@ Publishing
    :target: https://github.com/albertyw/git-reviewers
 .. |Python Versions| image:: https://img.shields.io/pypi/pyversions/git-reviewers.svg
    :target: https://github.com/albertyw/git-reviewers
-.. |Codeship Status for albertyw/git-reviewers| image:: https://app.codeship.com/projects/17913cd0-3524-0135-2853-7e1f21584d06%20/status?branch=master
+.. |Codeship Status for albertyw/git-reviewers| image:: https://app.codeship.com/projects/17913cd0-3524-0135-2853-7e1f21584d06/status?branch=master
    :target: https://app.codeship.com/projects/227040
 .. |Dependency Status| image:: https://gemnasium.com/badges/github.com/albertyw/git-reviewers.svg
    :target: https://gemnasium.com/githu%20b.com/albertyw/git-reviewers
