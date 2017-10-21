@@ -17,10 +17,10 @@ class TestFindReviewers(unittest.TestCase):
             self.finder.get_reviewers()
 
 
-class TestFindLogReviewers(unittest.TestCase):
+class TestFindDiffLogReviewers(unittest.TestCase):
     def setUp(self):
         reviewers.UBER = False
-        self.finder = reviewers.FindLogReviewers()
+        self.finder = reviewers.FindDiffLogReviewers()
 
     @patch('subprocess.run')
     def test_gets_diff_files(self, mock_run):

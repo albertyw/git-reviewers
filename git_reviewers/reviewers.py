@@ -14,14 +14,20 @@ UBER = False
 
 class FindReviewers():
     def get_reviewers(self):
+        """
+        All review classes should implement this and return a list of strings
+        representing reviewers
+        """
         raise NotImplementedError()
 
     def run_command(self, command):
+        """ Wrapper for running external subprocesses """
         process = subprocess.run(command, stdout=subprocess.PIPE)
         data = process.stdout.decode("utf-8")
         return data
 
     def extract_username_from_email(self, email):
+        """ Given an email, extract the username for that email """
         if UBER:
             if email[-9:] == '@uber.com':
                 return email[:-9]
@@ -30,8 +36,9 @@ class FindReviewers():
         return email
 
 
-class FindLogReviewers(FindReviewers):
+class FindDiffLogReviewers(FindReviewers):
     def extract_username_from_shortlog(self, shortlog):
+        """ Given a line from a git shortlog, extract the username """
         shortlog = shortlog.strip()
         email = shortlog[shortlog.rfind("<")+1:]
         email = email[:email.find(">")]
@@ -39,6 +46,7 @@ class FindLogReviewers(FindReviewers):
         return username
 
     def get_changed_files(self):
+        """ Find the non-committed changed files """
         git_diff_files_command = ['git', 'diff-files']
         git_diff_files = self.run_command(git_diff_files_command)
         files = git_diff_files.split("\n")
@@ -47,6 +55,7 @@ class FindLogReviewers(FindReviewers):
         return files
 
     def get_reviewers(self):
+        """ Find the reviewers based on the git log of the diffed files """
         changed_files = self.get_changed_files()
         reviewers = set()
         for changed in changed_files:
@@ -84,7 +93,7 @@ def main():
     args = parser.parse_args()
     UBER = args.uber
 
-    finder = FindLogReviewers()
+    finder = FindDiffLogReviewers()
     reviewers = finder.get_reviewers()
     show_reviewers(reviewers)
 
