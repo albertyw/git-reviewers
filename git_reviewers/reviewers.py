@@ -8,7 +8,7 @@ import sys
 if sys.version_info < (3, 0): # NOQA pragma: no cover
     raise SystemError("Must be using Python 3")
 
-__version__ = '0.1.1'
+__version__ = '0.1.2'
 UBER = False
 
 
