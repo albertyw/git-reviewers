@@ -10,31 +10,38 @@ BASE_DIRECTORY = os.path.normpath(os.path.join(directory, '..', '..'))
 
 class TestFindReviewers(unittest.TestCase):
     def setUp(self):
+        reviewers.UBER = False
         self.finder = reviewers.FindReviewers()
 
     def test_get_reviewers(self):
         with self.assertRaises(NotImplementedError):
             self.finder.get_reviewers()
 
+    @patch('subprocess.run')
+    def test_run_command(self, mock_run):
+        mock_run().stdout = b'asdf'
+        data = self.finder.run_command(['ls'])
+        self.assertEqual(data, 'asdf')
+
+    def test_extract_username_from_email(self):
+        email = 'asdf@asdf.com'
+        user = self.finder.extract_username_from_email(email)
+        self.assertEqual(user, email)
+
+    def test_extract_uber_username_from_email(self):
+        reviewers.UBER = True
+        email = 'asdf@asdf.com'
+        user = self.finder.extract_username_from_email(email)
+        self.assertEqual(user, None)
+        email = 'asdf@uber.com'
+        user = self.finder.extract_username_from_email(email)
+        self.assertEqual(user, 'asdf')
+
 
 class TestFindLogReviewers(unittest.TestCase):
     def setUp(self):
         reviewers.UBER = False
-        self.finder = reviewers.FindLogReviewers()
-
-    @patch('subprocess.run')
-    def test_gets_diff_files(self, mock_run):
-        process = MagicMock()
-        output = b':100644 100644 f1a6032222525ced9d1db7aa87f7956948f9ef98 '
-        output += b'0000000000000000000000000000000000000000 M\tREADME.rst\n'
-        output += b':100755 100755 02fbb893bcd9c7f3adfe36b48de0113336a1b209 '
-        output += b'0000000000000000000000000000000000000000 M\t'
-        output += b'git_reviewers/reviewers.py'
-        process.stdout = output
-        mock_run.return_value = process
-        diff_files = self.finder.get_changed_files()
-        expected = ['README.rst', 'git_reviewers/reviewers.py']
-        self.assertEqual(diff_files, expected)
+        self.finder = reviewers.FindFileLogReviewers()
 
     def test_gets_emails(self):
         shortlog = '     3\tAlbert Wang <a@example.com>\n'
@@ -53,6 +60,10 @@ class TestFindLogReviewers(unittest.TestCase):
         email = self.finder.extract_username_from_shortlog(shortlog)
         self.assertEqual(email, 'albertyw')
 
+    def test_get_changed_files(self):
+        with self.assertRaises(NotImplementedError):
+            self.finder.get_changed_files()
+
     @patch('subprocess.run')
     def test_gets_reviewers(self, mock_run):
         reviewers.UBER = True
@@ -65,6 +76,22 @@ class TestFindLogReviewers(unittest.TestCase):
         mock_run.return_value = process
         users = self.finder.get_reviewers()
         self.assertEqual(users, set(['albertyw']))
+
+
+class TestFindDiffLogReviewers(unittest.TestCase):
+    def setUp(self):
+        reviewers.UBER = False
+        self.finder = reviewers.FindDiffLogReviewers()
+
+    @patch('subprocess.run')
+    def test_gets_diff_files(self, mock_run):
+        process = MagicMock()
+        output = b'README.rst\ngit_reviewers/reviewers.py\n'
+        process.stdout = output
+        mock_run.return_value = process
+        diff_files = self.finder.get_changed_files()
+        expected = ['README.rst', 'git_reviewers/reviewers.py']
+        self.assertEqual(diff_files, expected)
 
 
 class TestShowReviewers(unittest.TestCase):
