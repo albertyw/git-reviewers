@@ -57,6 +57,9 @@ class FindFileLogReviewers(FindReviewers):
         users = [username for username in users if username]
         return users
 
+    def get_changed_files(self):
+        raise NotImplementedError()
+
     def get_reviewers(self):
         """ Find the reviewers based on the git log of the diffed files """
         changed_files = self.get_changed_files()
