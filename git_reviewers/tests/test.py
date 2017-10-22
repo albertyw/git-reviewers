@@ -94,6 +94,18 @@ class TestFindDiffLogReviewers(unittest.TestCase):
         self.assertEqual(diff_files, expected)
 
 
+class TestLogReviewers(unittest.TestCase):
+    def setUp(self):
+        reviewers.UBER = False
+        self.finder = reviewers.FindLogReviewers()
+
+    def test_get_changed_files(self):
+        changed_files = 'README.rst\nsetup.py\n'
+        self.finder.run_command = MagicMock(return_value=changed_files)
+        files = self.finder.get_changed_files()
+        self.assertEqual(files, ['README.rst', 'setup.py'])
+
+
 class TestShowReviewers(unittest.TestCase):
     @patch('builtins.print')
     def test_show_reviewers(self, mock_print):
