@@ -73,11 +73,9 @@ class FindFileLogReviewers(FindReviewers):
 class FindDiffLogReviewers(FindFileLogReviewers):
     def get_changed_files(self):
         """ Find the non-committed changed files """
-        git_diff_files_command = ['git', 'diff-files']
+        git_diff_files_command = ['git', 'diff-files', '--name-only']
         git_diff_files = self.run_command(git_diff_files_command)
-        files = git_diff_files.split("\n")
-        files = [x.split("\t")[-1].strip() for x in files]
-        files = [x for x in files if x]
+        files = git_diff_files.strip().split("\n")
         return files
 
 

@@ -86,11 +86,7 @@ class TestFindDiffLogReviewers(unittest.TestCase):
     @patch('subprocess.run')
     def test_gets_diff_files(self, mock_run):
         process = MagicMock()
-        output = b':100644 100644 f1a6032222525ced9d1db7aa87f7956948f9ef98 '
-        output += b'0000000000000000000000000000000000000000 M\tREADME.rst\n'
-        output += b':100755 100755 02fbb893bcd9c7f3adfe36b48de0113336a1b209 '
-        output += b'0000000000000000000000000000000000000000 M\t'
-        output += b'git_reviewers/reviewers.py'
+        output = b'README.rst\ngit_reviewers/reviewers.py\n'
         process.stdout = output
         mock_run.return_value = process
         diff_files = self.finder.get_changed_files()
