@@ -54,19 +54,24 @@ class FindDiffLogReviewers(FindReviewers):
         files = [x for x in files if x]
         return files
 
+    def get_log_reviewers_from_file(self, file_path):
+        """ Find the reviewers based on the git log for a file """
+        git_shortlog_command = ['git', 'shortlog', '-sne', file_path]
+        git_shortlog = self.run_command(git_shortlog_command).split("\n")
+        users = [
+            self.extract_username_from_shortlog(shortlog)
+            for shortlog
+            in git_shortlog
+        ]
+        users = [username for username in users if username]
+        return users
+
     def get_reviewers(self):
         """ Find the reviewers based on the git log of the diffed files """
         changed_files = self.get_changed_files()
         reviewers = set()
         for changed in changed_files:
-            git_shortlog_command = ['git', 'shortlog', '-sne', changed]
-            git_shortlog = self.run_command(git_shortlog_command).split("\n")
-            users = [
-                self.extract_username_from_shortlog(shortlog)
-                for shortlog
-                in git_shortlog
-            ]
-            users = [username for username in users if username]
+            users = self.get_log_reviewers_from_file(changed)
             reviewers = reviewers.union(users)
         return reviewers
 
