@@ -79,6 +79,15 @@ class FindDiffLogReviewers(FindFileLogReviewers):
         return files
 
 
+class FindLogReviewers(FindFileLogReviewers):
+    def get_changed_files(self):
+        """ Find the changed files between current status and master """
+        git_diff_files_command = ['git', 'diff', 'master', '--name-only']
+        git_diff_files = self.run_command(git_diff_files_command)
+        files = git_diff_files.strip().split("\n")
+        return files
+
+
 def show_reviewers(reviewers):
     print(", ".join(reviewers))
 
