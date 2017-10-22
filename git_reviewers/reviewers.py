@@ -36,7 +36,7 @@ class FindReviewers():
         return email
 
 
-class FindDiffLogReviewers(FindReviewers):
+class FindFileLogReviewers(FindReviewers):
     def extract_username_from_shortlog(self, shortlog):
         """ Given a line from a git shortlog, extract the username """
         shortlog = shortlog.strip()
@@ -44,15 +44,6 @@ class FindDiffLogReviewers(FindReviewers):
         email = email[:email.find(">")]
         username = self.extract_username_from_email(email)
         return username
-
-    def get_changed_files(self):
-        """ Find the non-committed changed files """
-        git_diff_files_command = ['git', 'diff-files']
-        git_diff_files = self.run_command(git_diff_files_command)
-        files = git_diff_files.split("\n")
-        files = [x.split("\t")[-1].strip() for x in files]
-        files = [x for x in files if x]
-        return files
 
     def get_log_reviewers_from_file(self, file_path):
         """ Find the reviewers based on the git log for a file """
@@ -74,6 +65,17 @@ class FindDiffLogReviewers(FindReviewers):
             users = self.get_log_reviewers_from_file(changed)
             reviewers = reviewers.union(users)
         return reviewers
+
+
+class FindDiffLogReviewers(FindFileLogReviewers):
+    def get_changed_files(self):
+        """ Find the non-committed changed files """
+        git_diff_files_command = ['git', 'diff-files']
+        git_diff_files = self.run_command(git_diff_files_command)
+        files = git_diff_files.split("\n")
+        files = [x.split("\t")[-1].strip() for x in files]
+        files = [x for x in files if x]
+        return files
 
 
 def show_reviewers(reviewers):
