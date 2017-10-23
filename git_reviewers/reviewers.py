@@ -25,7 +25,7 @@ class FindReviewers():
         process = subprocess.run(command, stdout=subprocess.PIPE)
         data = process.stdout.decode("utf-8").strip()
         if data:
-            return data.split()
+            return data.split('\n')
         return []
 
     def extract_username_from_email(self, email):
@@ -110,8 +110,11 @@ def main():
     args = parser.parse_args()
     UBER = args.uber
 
-    finder = FindDiffLogReviewers()
-    reviewers = finder.get_reviewers()
+    finders = [FindDiffLogReviewers, FindLogReviewers]
+    reviewers = set()
+    for finder in finders:
+        finder_reviewers = finder().get_reviewers()
+        reviewers = reviewers.union(finder_reviewers)
     show_reviewers(reviewers)
 
 
