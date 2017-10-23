@@ -1,6 +1,14 @@
 CHANGELOG.md
 ============
 
+v0.2.0 (2017-10-23)
+-------------------
+
+ - Be able to gather reviewers based on the changed files compared to master branch
+ - Updated testing dependencies
+ - Lots of refactors, fixes
+
+
 v0.1.2 (2017-10-20)
 -------------------
 
