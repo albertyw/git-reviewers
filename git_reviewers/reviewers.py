@@ -23,8 +23,10 @@ class FindReviewers():
     def run_command(self, command):
         """ Wrapper for running external subprocesses """
         process = subprocess.run(command, stdout=subprocess.PIPE)
-        data = process.stdout.decode("utf-8")
-        return data
+        data = process.stdout.decode("utf-8").strip()
+        if data:
+            return data.split()
+        return []
 
     def extract_username_from_email(self, email):
         """ Given an email, extract the username for that email """
@@ -48,7 +50,7 @@ class FindFileLogReviewers(FindReviewers):
     def get_log_reviewers_from_file(self, file_path):
         """ Find the reviewers based on the git log for a file """
         git_shortlog_command = ['git', 'shortlog', '-sne', file_path]
-        git_shortlog = self.run_command(git_shortlog_command).split("\n")
+        git_shortlog = self.run_command(git_shortlog_command)
         users = [
             self.extract_username_from_shortlog(shortlog)
             for shortlog
@@ -75,9 +77,7 @@ class FindDiffLogReviewers(FindFileLogReviewers):
         """ Find the non-committed changed files """
         git_diff_files_command = ['git', 'diff-files', '--name-only']
         git_diff_files = self.run_command(git_diff_files_command)
-        if git_diff_files.strip():
-            return git_diff_files.strip().split("\n")
-        return []
+        return git_diff_files
 
 
 class FindLogReviewers(FindFileLogReviewers):
@@ -85,9 +85,7 @@ class FindLogReviewers(FindFileLogReviewers):
         """ Find the changed files between current status and master """
         git_diff_files_command = ['git', 'diff', 'master', '--name-only']
         git_diff_files = self.run_command(git_diff_files_command)
-        if git_diff_files.strip():
-            return  git_diff_files.strip().split("\n")
-        return []
+        return git_diff_files
 
 
 def show_reviewers(reviewers):

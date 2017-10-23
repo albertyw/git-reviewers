@@ -21,7 +21,13 @@ class TestFindReviewers(unittest.TestCase):
     def test_run_command(self, mock_run):
         mock_run().stdout = b'asdf'
         data = self.finder.run_command(['ls'])
-        self.assertEqual(data, 'asdf')
+        self.assertEqual(data, ['asdf'])
+
+    @patch('subprocess.run')
+    def test_run_command_empty_response(self, mock_run):
+        mock_run().stdout = b''
+        data = self.finder.run_command([':'])
+        self.assertEqual(data, [])
 
     def test_extract_username_from_email(self):
         email = 'asdf@asdf.com'
@@ -100,7 +106,7 @@ class TestLogReviewers(unittest.TestCase):
         self.finder = reviewers.FindLogReviewers()
 
     def test_get_changed_files(self):
-        changed_files = 'README.rst\nsetup.py\n'
+        changed_files = ['README.rst', 'setup.py']
         self.finder.run_command = MagicMock(return_value=changed_files)
         files = self.finder.get_changed_files()
         self.assertEqual(files, ['README.rst', 'setup.py'])
