@@ -75,8 +75,9 @@ class FindDiffLogReviewers(FindFileLogReviewers):
         """ Find the non-committed changed files """
         git_diff_files_command = ['git', 'diff-files', '--name-only']
         git_diff_files = self.run_command(git_diff_files_command)
-        files = git_diff_files.strip().split("\n")
-        return files
+        if git_diff_files.strip():
+            return git_diff_files.strip().split("\n")
+        return []
 
 
 class FindLogReviewers(FindFileLogReviewers):
@@ -84,8 +85,9 @@ class FindLogReviewers(FindFileLogReviewers):
         """ Find the changed files between current status and master """
         git_diff_files_command = ['git', 'diff', 'master', '--name-only']
         git_diff_files = self.run_command(git_diff_files_command)
-        files = git_diff_files.strip().split("\n")
-        return files
+        if git_diff_files.strip():
+            return  git_diff_files.strip().split("\n")
+        return []
 
 
 def show_reviewers(reviewers):
