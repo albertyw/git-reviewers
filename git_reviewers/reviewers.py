@@ -130,7 +130,7 @@ def main():
     args = parser.parse_args()
     UBER = args.uber
 
-    finders = [FindDiffLogReviewers, FindLogReviewers]
+    finders = [FindDiffLogReviewers, FindLogReviewers, FindArcCommitReviewers]
     reviewers = set()
     for finder in finders:
         finder_reviewers = finder().get_reviewers()
