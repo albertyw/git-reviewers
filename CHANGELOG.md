@@ -1,6 +1,14 @@
 CHANGELOG.md
 ============
 
+v0.3.0 (2017-10-30)
+-------------------
+
+ - Get reviewers based on arcanist reviewers in commit messages
+ - Remove uber-specific logic
+ - Add `-v` to read git-reviewer version
+
+
 v0.2.0 (2017-10-23)
 -------------------
 
