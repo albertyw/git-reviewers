@@ -112,6 +112,23 @@ class TestLogReviewers(unittest.TestCase):
         self.assertEqual(files, ['README.rst', 'setup.py'])
 
 
+class TestFindArcCommitReviewers(unittest.TestCase):
+    def setUp(self):
+        self.finder = reviewers.FindArcCommitReviewers()
+
+    def test_no_reviewers(self):
+        log = ['asdf']
+        self.finder.run_command = MagicMock(return_value=log)
+        reviewers = self.finder.get_log_reviewers_from_file('file')
+        self.assertEqual(reviewers, [])
+
+    def test_reviewers(self):
+        log = ['asdf', ' Reviewed By: asdf, qwer']
+        self.finder.run_command = MagicMock(return_value=log)
+        reviewers = self.finder.get_log_reviewers_from_file('file')
+        self.assertEqual(reviewers, ['asdf', 'qwer'])
+
+
 class TestShowReviewers(unittest.TestCase):
     @patch('builtins.print')
     def test_show_reviewers(self, mock_print):

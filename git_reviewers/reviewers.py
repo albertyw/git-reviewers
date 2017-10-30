@@ -88,6 +88,26 @@ class FindLogReviewers(FindFileLogReviewers):
         return git_diff_files
 
 
+class FindArcCommitReviewers(FindLogReviewers):
+    """
+    Get reviewers based on arc commit messages, which list which users
+    have approved past diffs
+    """
+    def get_log_reviewers_from_file(self, file_path):
+        git_commit_messages_command = ['git', 'log', '--all', file_path]
+        git_commit_messages = self.run_command(git_commit_messages_command)
+        reviewers_identifier = 'Reviewed By: '
+        reviewers = []
+        for line in git_commit_messages:
+            if reviewers_identifier not in line:
+                continue
+            line = line.replace(reviewers_identifier, '')
+            line = line.split(', ')
+            line = [r.strip() for r in line]
+            reviewers += line
+        return reviewers
+
+
 def show_reviewers(reviewers):
     print(", ".join(reviewers))
 
@@ -110,7 +130,7 @@ def main():
     args = parser.parse_args()
     UBER = args.uber
 
-    finders = [FindDiffLogReviewers, FindLogReviewers]
+    finders = [FindDiffLogReviewers, FindLogReviewers, FindArcCommitReviewers]
     reviewers = set()
     for finder in finders:
         finder_reviewers = finder().get_reviewers()
