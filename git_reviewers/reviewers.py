@@ -9,7 +9,7 @@ if sys.version_info < (3, 0): # NOQA pragma: no cover
     raise SystemError("Must be using Python 3")
 
 __version__ = '0.2.0'
-UBER = False
+STRIP_DOMAIN_USERNAMES = ['uber.com']
 
 
 class FindReviewers():
@@ -30,11 +30,9 @@ class FindReviewers():
 
     def extract_username_from_email(self, email):
         """ Given an email, extract the username for that email """
-        if UBER:
-            if email[-9:] == '@uber.com':
-                return email[:-9]
-            else:
-                return None
+        domain = email[email.find('@')+1:]
+        if domain in STRIP_DOMAIN_USERNAMES:
+            return email[:email.find('@')]
         return email
 
 
@@ -113,7 +111,6 @@ def show_reviewers(reviewers):
 
 
 def main():
-    global UBER
     description = "Suggest reviewers for your diff.\n"
     description += "https://github.com/albertyw/git-reviewers"
     parser = argparse.ArgumentParser(description=description)
@@ -122,13 +119,6 @@ def main():
         default='',
         help='relative path to the current git repository'
     )
-    parser.add_argument(
-        '--uber',
-        action="store_true",
-        help='output reviewers list to work with uber repositories'
-    )
-    args = parser.parse_args()
-    UBER = args.uber
 
     finders = [FindDiffLogReviewers, FindLogReviewers, FindArcCommitReviewers]
     reviewers = set()

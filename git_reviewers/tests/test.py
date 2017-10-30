@@ -10,7 +10,6 @@ BASE_DIRECTORY = os.path.normpath(os.path.join(directory, '..', '..'))
 
 class TestFindReviewers(unittest.TestCase):
     def setUp(self):
-        reviewers.UBER = False
         self.finder = reviewers.FindReviewers()
 
     def test_get_reviewers(self):
@@ -29,16 +28,12 @@ class TestFindReviewers(unittest.TestCase):
         data = self.finder.run_command([':'])
         self.assertEqual(data, [])
 
-    def test_extract_username_from_email(self):
-        email = 'asdf@asdf.com'
+    def test_extract_username_from_generic_email(self):
+        email = 'asdf@gmail.com'
         user = self.finder.extract_username_from_email(email)
-        self.assertEqual(user, email)
+        self.assertEqual(user, 'asdf@gmail.com')
 
     def test_extract_uber_username_from_email(self):
-        reviewers.UBER = True
-        email = 'asdf@asdf.com'
-        user = self.finder.extract_username_from_email(email)
-        self.assertEqual(user, None)
         email = 'asdf@uber.com'
         user = self.finder.extract_username_from_email(email)
         self.assertEqual(user, 'asdf')
@@ -46,22 +41,14 @@ class TestFindReviewers(unittest.TestCase):
 
 class TestFindLogReviewers(unittest.TestCase):
     def setUp(self):
-        reviewers.UBER = False
         self.finder = reviewers.FindFileLogReviewers()
 
-    def test_gets_emails(self):
-        shortlog = '     3\tAlbert Wang <a@example.com>\n'
+    def test_gets_generic_emails(self):
+        shortlog = '     3\tAlbert Wang <example@gmail.com>\n'
         email = self.finder.extract_username_from_shortlog(shortlog)
-        self.assertEqual(email, 'a@example.com')
-
-    def test_excludes_non_uber_emails(self):
-        reviewers.UBER = True
-        shortlog = '     3\tAlbert Wang <a@example.com>\n'
-        email = self.finder.extract_username_from_shortlog(shortlog)
-        self.assertEqual(email, None)
+        self.assertEqual(email, 'example@gmail.com')
 
     def test_gets_uber_emails(self):
-        reviewers.UBER = True
         shortlog = '     3\tAlbert Wang <albertyw@uber.com>\n'
         email = self.finder.extract_username_from_shortlog(shortlog)
         self.assertEqual(email, 'albertyw')
@@ -72,21 +59,19 @@ class TestFindLogReviewers(unittest.TestCase):
 
     @patch('subprocess.run')
     def test_gets_reviewers(self, mock_run):
-        reviewers.UBER = True
         changed_files = ['README.rst']
         self.finder.get_changed_files = MagicMock(return_value=changed_files)
         process = MagicMock()
         git_shortlog = b'     3\tAlbert Wang <albertyw@uber.com>\n'
-        git_shortlog += b'3\tAlbert Wang <a@example.com>\n'
+        git_shortlog += b'3\tAlbert Wang <example@gmail.com>\n'
         process.stdout = git_shortlog
         mock_run.return_value = process
         users = self.finder.get_reviewers()
-        self.assertEqual(users, set(['albertyw']))
+        self.assertEqual(users, set(['albertyw', 'example@gmail.com']))
 
 
 class TestFindDiffLogReviewers(unittest.TestCase):
     def setUp(self):
-        reviewers.UBER = False
         self.finder = reviewers.FindDiffLogReviewers()
 
     @patch('subprocess.run')
@@ -102,7 +87,6 @@ class TestFindDiffLogReviewers(unittest.TestCase):
 
 class TestLogReviewers(unittest.TestCase):
     def setUp(self):
-        reviewers.UBER = False
         self.finder = reviewers.FindLogReviewers()
 
     def test_get_changed_files(self):
