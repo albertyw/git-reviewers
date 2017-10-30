@@ -123,10 +123,9 @@ class TestShowReviewers(unittest.TestCase):
 
 class TestMain(unittest.TestCase):
     @patch('builtins.print')
-    @patch('argparse.ArgumentParser')
-    def test_main(self, mock_argparse, mock_print):
-        mock_argparse().parse_args().path = ""
-        reviewers.main()
+    def test_main(self, mock_print):
+        with patch.object(sys, 'argv', ['reviewers.py']):
+            reviewers.main()
         self.assertTrue(mock_print.called)
 
     @patch('argparse.ArgumentParser._print_message')
