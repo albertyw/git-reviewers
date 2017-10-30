@@ -119,6 +119,10 @@ def main():
         default='',
         help='relative path to the current git repository'
     )
+    parser.add_argument(
+        '-v', '--version', action='version', version=__version__,
+    )
+    parser.parse_args()
 
     finders = [FindDiffLogReviewers, FindLogReviewers, FindArcCommitReviewers]
     reviewers = set()

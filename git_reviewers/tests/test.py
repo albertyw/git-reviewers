@@ -1,4 +1,5 @@
 import os
+import sys
 import unittest
 from unittest.mock import patch, MagicMock
 
@@ -127,3 +128,12 @@ class TestMain(unittest.TestCase):
         mock_argparse().parse_args().path = ""
         reviewers.main()
         self.assertTrue(mock_print.called)
+
+    @patch('argparse.ArgumentParser._print_message')
+    def test_version(self, mock_print):
+        with patch.object(sys, 'argv', ['reviewers.py', '-v']):
+            with self.assertRaises(SystemExit):
+                reviewers.main()
+        self.assertTrue(mock_print.called)
+        version = reviewers.__version__ + "\n"
+        self.assertEqual(mock_print.call_args[0][0], version)
