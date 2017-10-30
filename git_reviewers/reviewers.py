@@ -9,7 +9,7 @@ if sys.version_info < (3, 0): # NOQA pragma: no cover
     raise SystemError("Must be using Python 3")
 
 __version__ = '0.2.0'
-GENERIC_DOMAINS = ['gmail.com']
+STRIP_DOMAIN_USERNAMES = ['uber.com']
 
 
 class FindReviewers():
@@ -31,9 +31,9 @@ class FindReviewers():
     def extract_username_from_email(self, email):
         """ Given an email, extract the username for that email """
         domain = email[email.find('@')+1:]
-        if domain in GENERIC_DOMAINS:
-            return email
-        return email[:email.find('@')]
+        if domain in STRIP_DOMAIN_USERNAMES:
+            return email[:email.find('@')]
+        return email
 
 
 class FindFileLogReviewers(FindReviewers):
