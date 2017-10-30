@@ -119,11 +119,6 @@ def main():
         default='',
         help='relative path to the current git repository'
     )
-    parser.add_argument(
-        '--uber',
-        action="store_true",
-        help='output reviewers list to work with uber repositories'
-    )
 
     finders = [FindDiffLogReviewers, FindLogReviewers, FindArcCommitReviewers]
     reviewers = set()

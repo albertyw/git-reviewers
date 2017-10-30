@@ -20,11 +20,10 @@ Usage
 
 ::
 
-    Usage: git reviewers [-h] [--path PATH] [--uber]
+    Usage: git reviewers [-h] [--path PATH]
 
 If ``--path`` is called, then its value is be used to compute the
-relative path to the current git repository If ``--uber`` is called,
-then the reviewers lookup and output will be compatible with Uber
+relative path to the current git repository.
 
 Development
 -----------
