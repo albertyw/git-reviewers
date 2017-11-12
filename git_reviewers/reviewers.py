@@ -16,11 +16,6 @@ STRIP_DOMAIN_USERNAMES = ['uber.com']
 REVIEWERS_LIMIT = 7
 
 
-class Reviewers():
-    def __init__(self):
-        self.reviewers = {}
-
-
 class FindReviewers():
     def get_reviewers(self):  # type: () -> typing.Counter[str]
         """
