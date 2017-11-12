@@ -1,6 +1,14 @@
 CHANGELOG.md
 ============
 
+v0.3.1 (2017-11-12)
+-------------------
+
+ - Limit to 7 reviewers
+ - Support weighting/sorting reviewers
+ - Add PEP-484 type annotations for mypy
+
+
 v0.3.0 (2017-10-30)
 -------------------
 
