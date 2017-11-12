@@ -13,6 +13,7 @@ if sys.version_info < (3, 0): # NOQA pragma: no cover
 
 __version__ = '0.3.0'
 STRIP_DOMAIN_USERNAMES = ['uber.com']
+REVIEWERS_LIMIT = 7
 
 
 class Reviewers():
@@ -115,7 +116,8 @@ class FindArcCommitReviewers(FindLogReviewers):
 
 
 def show_reviewers(reviewers):  # type: (typing.Counter[str]) -> None
-    print(", ".join(reviewers.elements()))
+    reviewer_list = [x[0] for x in reviewers.most_common(REVIEWERS_LIMIT)]
+    print(", ".join(reviewer_list))
 
 
 def main() -> None:
