@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 
 import argparse
+from collections import Counter
 import subprocess
 import sys
 
-from typing import List, Set
+import typing  # NOQA
+from typing import List
 
 if sys.version_info < (3, 0): # NOQA pragma: no cover
     raise SystemError("Must be using Python 3")
@@ -13,8 +15,13 @@ __version__ = '0.3.0'
 STRIP_DOMAIN_USERNAMES = ['uber.com']
 
 
+class Reviewers():
+    def __init__(self):
+        self.reviewers = {}
+
+
 class FindReviewers():
-    def get_reviewers(self) -> Set[str]:
+    def get_reviewers(self):  # type: () -> typing.Counter[str]
         """
         All review classes should implement this and return a list of strings
         representing reviewers
@@ -61,13 +68,13 @@ class FindFileLogReviewers(FindReviewers):
     def get_changed_files(self) -> List[str]:
         raise NotImplementedError()
 
-    def get_reviewers(self) -> Set[str]:
+    def get_reviewers(self):  # type: () -> typing.Counter[str]
         """ Find the reviewers based on the git log of the diffed files """
         changed_files = self.get_changed_files()
-        reviewers = set()  # type: Set[str]
+        reviewers = Counter()  # type: typing.Counter[str]
         for changed in changed_files:
             users = self.get_log_reviewers_from_file(changed)
-            reviewers = reviewers.union(users)
+            reviewers.update(users)
         return reviewers
 
 
@@ -107,8 +114,8 @@ class FindArcCommitReviewers(FindLogReviewers):
         return reviewers
 
 
-def show_reviewers(reviewers: Set[str]) -> None:
-    print(", ".join(reviewers))
+def show_reviewers(reviewers):  # type: (typing.Counter[str]) -> None
+    print(", ".join(reviewers.elements()))
 
 
 def main() -> None:
@@ -126,10 +133,10 @@ def main() -> None:
     parser.parse_args()
 
     finders = [FindDiffLogReviewers, FindLogReviewers, FindArcCommitReviewers]
-    reviewers = set()  # type: Set[str]
+    reviewers = Counter()  # type: typing.Counter[str]
     for finder in finders:
         finder_reviewers = finder().get_reviewers()
-        reviewers = reviewers.union(finder_reviewers)
+        reviewers.update(finder_reviewers)
     show_reviewers(reviewers)
 
 
