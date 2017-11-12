@@ -5,8 +5,8 @@ from collections import Counter
 import subprocess
 import sys
 
-import typing
-from typing import Dict, List
+import typing  # NOQA
+from typing import List
 
 if sys.version_info < (3, 0): # NOQA pragma: no cover
     raise SystemError("Must be using Python 3")
@@ -21,7 +21,7 @@ class Reviewers():
 
 
 class FindReviewers():
-    def get_reviewers(self) -> Counter:
+    def get_reviewers(self):  # type: () -> typing.Counter[str]
         """
         All review classes should implement this and return a list of strings
         representing reviewers
@@ -68,10 +68,10 @@ class FindFileLogReviewers(FindReviewers):
     def get_changed_files(self) -> List[str]:
         raise NotImplementedError()
 
-    def get_reviewers(self) -> Counter:
+    def get_reviewers(self):  # type: () -> typing.Counter[str]
         """ Find the reviewers based on the git log of the diffed files """
         changed_files = self.get_changed_files()
-        reviewers = Counter() # type: typing.Counter[str]
+        reviewers = Counter()  # type: typing.Counter[str]
         for changed in changed_files:
             users = self.get_log_reviewers_from_file(changed)
             reviewers.update(users)
@@ -114,7 +114,7 @@ class FindArcCommitReviewers(FindLogReviewers):
         return reviewers
 
 
-def show_reviewers(reviewers: typing.Counter[str]) -> None:
+def show_reviewers(reviewers):  # type: (typing.Counter[str]) -> None
     print(", ".join(reviewers.elements()))
 
 
