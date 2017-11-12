@@ -123,6 +123,14 @@ class TestShowReviewers(unittest.TestCase):
         reviewers.show_reviewers(usernames)
         mock_print.assert_called_with('asdf, albertyw')
 
+    @patch('builtins.print')
+    def test_limit_show_reviewers(self, mock_print):
+        usernames = Counter(
+            {'a': 1, 'b': 2, 'c': 3, 'd': 4, 'e': 5, 'f': 6, 'g': 7, 'h': 8}
+        )
+        reviewers.show_reviewers(usernames)
+        mock_print.assert_called_with('h, g, f, e, d, c, b')
+
 
 class TestMain(unittest.TestCase):
     @patch('builtins.print')
