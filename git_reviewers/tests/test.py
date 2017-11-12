@@ -1,3 +1,4 @@
+from collections import Counter
 import os
 import sys
 import unittest
@@ -68,7 +69,8 @@ class TestFindLogReviewers(unittest.TestCase):
         process.stdout = git_shortlog
         mock_run.return_value = process
         users = self.finder.get_reviewers()
-        self.assertEqual(users, set(['albertyw', 'example@gmail.com']))
+        reviewers = Counter({'albertyw': 1, 'example@gmail.com': 1})
+        self.assertEqual(users, reviewers)
 
 
 class TestFindDiffLogReviewers(unittest.TestCase):
@@ -117,8 +119,9 @@ class TestFindArcCommitReviewers(unittest.TestCase):
 class TestShowReviewers(unittest.TestCase):
     @patch('builtins.print')
     def test_show_reviewers(self, mock_print):
-        reviewers.show_reviewers(['albertyw', 'asdf'])
-        mock_print.assert_called_with('albertyw, asdf')
+        usernames = Counter({'albertyw': 1, 'asdf': 2})
+        reviewers.show_reviewers(usernames)
+        mock_print.assert_called_with('asdf, albertyw')
 
 
 class TestMain(unittest.TestCase):
