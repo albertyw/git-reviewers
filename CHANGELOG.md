@@ -1,6 +1,14 @@
 CHANGELOG.md
 ============
 
+v0.4.0 (2017-11-13)
+-------------------
+
+ - Remove no-op `--path` argument
+ - Add an `--ignore` argument for ignoring possible reviewers
+ - Weight reviewers by the frequency they show up in previous git history
+
+
 v0.3.1 (2017-11-12)
 -------------------
 
