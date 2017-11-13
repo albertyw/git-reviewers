@@ -6,7 +6,7 @@ import subprocess
 import sys
 
 import typing  # NOQA
-from typing import Dict, List, Tuple
+from typing import List, Tuple
 
 if sys.version_info < (3, 0): # NOQA pragma: no cover
     raise SystemError("Must be using Python 3")
@@ -50,7 +50,8 @@ class FindFileLogReviewers(FindReviewers):
         count = int(shortlog.split("\t")[0])
         return username, count
 
-    def get_log_reviewers_from_file(self, file_path):  # type: (str) -> typing.Counter[str]
+    def get_log_reviewers_from_file(self, file_path):
+        # type: (str) -> typing.Counter[str]
         """ Find the reviewers based on the git log for a file """
         git_shortlog_command = ['git', 'shortlog', '-sne', file_path]
         git_shortlog = self.run_command(git_shortlog_command)
@@ -59,7 +60,10 @@ class FindFileLogReviewers(FindReviewers):
             for shortlog
             in git_shortlog
         )
-        users = {reviewer: count for (reviewer, count) in users.items() if reviewer}
+        users = {
+            reviewer: count for (reviewer, count)
+            in users.items() if reviewer
+        }
         return Counter(users)
 
     def get_changed_files(self) -> List[str]:
@@ -96,7 +100,8 @@ class FindArcCommitReviewers(FindLogReviewers):
     Get reviewers based on arc commit messages, which list which users
     have approved past diffs
     """
-    def get_log_reviewers_from_file(self, file_path):  # type: (str) -> typing.Counter[str]
+    def get_log_reviewers_from_file(self, file_path):
+        # type: (str) -> typing.Counter[str]
         git_commit_messages_command = ['git', 'log', '--all', file_path]
         git_commit_messages = self.run_command(git_commit_messages_command)
         reviewers_identifier = 'Reviewed By: '
