@@ -120,11 +120,6 @@ def main() -> None:
     description += "https://github.com/albertyw/git-reviewers"
     parser = argparse.ArgumentParser(description=description)
     parser.add_argument(
-        '--path',
-        default='',
-        help='relative path to the current git repository'
-    )
-    parser.add_argument(
         '-v', '--version', action='version', version=__version__,
     )
     parser.add_argument(
