@@ -48,12 +48,12 @@ class TestFindLogReviewers(unittest.TestCase):
     def test_gets_generic_emails(self):
         shortlog = '     3\tAlbert Wang <example@gmail.com>\n'
         email = self.finder.extract_username_from_shortlog(shortlog)
-        self.assertEqual(email, 'example@gmail.com')
+        self.assertEqual(email, ('example@gmail.com', 3))
 
     def test_gets_uber_emails(self):
         shortlog = '     3\tAlbert Wang <albertyw@uber.com>\n'
         email = self.finder.extract_username_from_shortlog(shortlog)
-        self.assertEqual(email, 'albertyw')
+        self.assertEqual(email, ('albertyw', 3))
 
     def test_get_changed_files(self):
         with self.assertRaises(NotImplementedError):
@@ -69,7 +69,7 @@ class TestFindLogReviewers(unittest.TestCase):
         process.stdout = git_shortlog
         mock_run.return_value = process
         users = self.finder.get_reviewers()
-        reviewers = Counter({'albertyw': 1, 'example@gmail.com': 1})
+        reviewers = Counter({'albertyw': 3, 'example@gmail.com': 3})
         self.assertEqual(users, reviewers)
 
 
@@ -107,13 +107,19 @@ class TestFindArcCommitReviewers(unittest.TestCase):
         log = ['asdf']
         self.finder.run_command = MagicMock(return_value=log)
         reviewers = self.finder.get_log_reviewers_from_file('file')
-        self.assertEqual(reviewers, [])
+        self.assertEqual(reviewers, Counter())
 
     def test_reviewers(self):
         log = ['asdf', ' Reviewed By: asdf, qwer']
         self.finder.run_command = MagicMock(return_value=log)
         reviewers = self.finder.get_log_reviewers_from_file('file')
-        self.assertEqual(reviewers, ['asdf', 'qwer'])
+        self.assertEqual(reviewers, Counter({'asdf': 1, 'qwer': 1}))
+
+    def test_multiple_reviews(self):
+        log = ['asdf', ' Reviewed By: asdf, qwer', 'Reviewed By: asdf']
+        self.finder.run_command = MagicMock(return_value=log)
+        reviewers = self.finder.get_log_reviewers_from_file('file')
+        self.assertEqual(reviewers, Counter({'asdf': 2, 'qwer': 1}))
 
 
 class TestShowReviewers(unittest.TestCase):
