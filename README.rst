@@ -53,8 +53,8 @@ Publishing
 .. |Codeship Status for albertyw/git-reviewers| image:: https://app.codeship.com/projects/17913cd0-3524-0135-2853-7e1f21584d06/status?branch=master
    :target: https://app.codeship.com/projects/227040
 .. |Dependency Status| image:: https://gemnasium.com/badges/github.com/albertyw/git-reviewers.svg
-   :target: https://gemnasium.com/githu%20b.com/albertyw/git-reviewers
+   :target: https://gemnasium.com/github.com/albertyw/git-reviewers
 .. |Code Climate| image:: https://codeclimate.com/github/albertyw/git-reviewers/badges/gpa.svg
-   :target: https://codeclimate.com/github%20/albertyw/git-reviewers
+   :target: https://codeclimate.com/github/albertyw/git-reviewers
 .. |Test Coverage| image:: https://codeclimate.com/github/albertyw/git-reviewers/badges/coverage.svg
-   :target: https://codeclimate.com/%20github/albertyw/git-reviewers/coverage
+   :target: https://codeclimate.com/github/albertyw/git-reviewers/coverage
