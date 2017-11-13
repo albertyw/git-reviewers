@@ -150,9 +150,13 @@ class TestMain(unittest.TestCase):
 
     @patch('builtins.print')
     def test_ignore_reviewers(self, mock_print):
-        counter = Counter({'asdf':1, 'qwer': 1})
+        counter = Counter({'asdf': 1, 'qwer': 1})
+        get_reviewers = (
+            'git_reviewers.reviewers.'
+            'FindFileLogReviewers.get_reviewers'
+        )
         with patch.object(sys, 'argv', ['reviewers.py', '-i', 'asdf']):
-            with patch('git_reviewers.reviewers.FindFileLogReviewers.get_reviewers') as mock_get_reviewers:
+            with patch(get_reviewers) as mock_get_reviewers:
                 mock_get_reviewers.return_value = counter
                 reviewers.main()
         self.assertEqual(mock_print.call_args[0][0], 'qwer')
