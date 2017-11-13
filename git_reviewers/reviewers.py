@@ -6,7 +6,7 @@ import subprocess
 import sys
 
 import typing  # NOQA
-from typing import List
+from typing import List, Tuple
 
 if sys.version_info < (3, 0): # NOQA pragma: no cover
     raise SystemError("Must be using Python 3")
@@ -41,25 +41,30 @@ class FindReviewers():
 
 
 class FindFileLogReviewers(FindReviewers):
-    def extract_username_from_shortlog(self, shortlog: str) -> str:
+    def extract_username_from_shortlog(self, shortlog: str) -> Tuple[str, int]:
         """ Given a line from a git shortlog, extract the username """
         shortlog = shortlog.strip()
         email = shortlog[shortlog.rfind("<")+1:]
         email = email[:email.find(">")]
         username = self.extract_username_from_email(email)
-        return username
+        count = int(shortlog.split("\t")[0])
+        return username, count
 
-    def get_log_reviewers_from_file(self, file_path: str) -> List[str]:
+    def get_log_reviewers_from_file(self, file_path):
+        # type: (str) -> typing.Counter[str]
         """ Find the reviewers based on the git log for a file """
         git_shortlog_command = ['git', 'shortlog', '-sne', file_path]
         git_shortlog = self.run_command(git_shortlog_command)
-        users = [
+        users = dict(
             self.extract_username_from_shortlog(shortlog)
             for shortlog
             in git_shortlog
-        ]
-        users = [username for username in users if username]
-        return users
+        )
+        users = {
+            reviewer: count for (reviewer, count)
+            in users.items() if reviewer
+        }
+        return Counter(users)
 
     def get_changed_files(self) -> List[str]:
         raise NotImplementedError()
@@ -95,18 +100,19 @@ class FindArcCommitReviewers(FindLogReviewers):
     Get reviewers based on arc commit messages, which list which users
     have approved past diffs
     """
-    def get_log_reviewers_from_file(self, file_path: str) -> List[str]:
+    def get_log_reviewers_from_file(self, file_path):
+        # type: (str) -> typing.Counter[str]
         git_commit_messages_command = ['git', 'log', '--all', file_path]
         git_commit_messages = self.run_command(git_commit_messages_command)
         reviewers_identifier = 'Reviewed By: '
-        reviewers = []  # type: List[str]
+        reviewers = Counter()  # type: typing.Counter[str]
         for line in git_commit_messages:
             if reviewers_identifier not in line:
                 continue
             line = line.replace(reviewers_identifier, '')
             line_reviewers = line.split(', ')
             line_reviewers = [r.strip() for r in line_reviewers]
-            reviewers += line_reviewers
+            reviewers.update(line_reviewers)
         return reviewers
 
 
