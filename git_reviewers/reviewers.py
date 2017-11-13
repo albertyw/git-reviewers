@@ -133,7 +133,7 @@ def main() -> None:
     for finder in finders:
         finder_reviewers = finder().get_reviewers()
         reviewers.update(finder_reviewers)
-    for ignore in args.ignore:
+    for ignore in args.ignore.split(','):
         del reviewers[ignore]
     show_reviewers(reviewers)
 
