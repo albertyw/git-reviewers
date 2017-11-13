@@ -127,13 +127,19 @@ def main() -> None:
     parser.add_argument(
         '-v', '--version', action='version', version=__version__,
     )
-    parser.parse_args()
+    parser.add_argument(
+        '-i', '--ignore',
+        default='', help='ignore a list of reviewers (comma separated)',
+    )
+    args = parser.parse_args()
 
     finders = [FindDiffLogReviewers, FindLogReviewers, FindArcCommitReviewers]
     reviewers = Counter()  # type: typing.Counter[str]
     for finder in finders:
         finder_reviewers = finder().get_reviewers()
         reviewers.update(finder_reviewers)
+    for ignore in args.ignore:
+        del reviewers[ignore]
     show_reviewers(reviewers)
 
 
