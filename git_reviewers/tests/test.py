@@ -30,15 +30,15 @@ class TestFindReviewers(unittest.TestCase):
         data = self.finder.run_command([':'])
         self.assertEqual(data, [])
 
-    def test_extract_username_from_generic_email(self):
-        email = 'asdf@gmail.com'
+    def check_extract_username(self, email, expected_user):
         user = self.finder.extract_username_from_email(email)
-        self.assertEqual(user, 'asdf@gmail.com')
+        self.assertEqual(user, expected_user)
+
+    def test_extract_username_from_generic_email(self):
+        self.check_extract_username('asdf@gmail.com', 'asdf@gmail.com')
 
     def test_extract_uber_username_from_email(self):
-        email = 'asdf@uber.com'
-        user = self.finder.extract_username_from_email(email)
-        self.assertEqual(user, 'asdf')
+        self.check_extract_username('asdf@uber.com', 'asdf')
 
 
 class TestFindLogReviewers(unittest.TestCase):
