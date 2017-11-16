@@ -45,15 +45,25 @@ class TestFindLogReviewers(unittest.TestCase):
     def setUp(self):
         self.finder = reviewers.FindFileLogReviewers()
 
+    def check_extract_username_from_shortlog(self, shortlog, email, weight):
+        user_data = self.finder.extract_username_from_shortlog(shortlog)
+        self.assertEqual(user_data, (email, weight))
+
     def test_gets_generic_emails(self):
         shortlog = '     3\tAlbert Wang <example@gmail.com>\n'
-        email = self.finder.extract_username_from_shortlog(shortlog)
-        self.assertEqual(email, ('example@gmail.com', 3))
+        self.check_extract_username_from_shortlog(
+            shortlog,
+            'example@gmail.com',
+            3,
+        )
 
     def test_gets_uber_emails(self):
         shortlog = '     3\tAlbert Wang <albertyw@uber.com>\n'
-        email = self.finder.extract_username_from_shortlog(shortlog)
-        self.assertEqual(email, ('albertyw', 3))
+        self.check_extract_username_from_shortlog(shortlog, 'albertyw', 3)
+
+    def test_gets_user_weight(self):
+        shortlog = '     2\tAlbert Wang <albertyw@uber.com>\n'
+        self.check_extract_username_from_shortlog(shortlog, 'albertyw', 2)
 
     def test_get_changed_files(self):
         with self.assertRaises(NotImplementedError):
