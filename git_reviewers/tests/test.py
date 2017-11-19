@@ -147,6 +147,12 @@ class TestShowReviewers(unittest.TestCase):
         reviewers.show_reviewers(usernames, False)
         mock_print.assert_called_with('h, g, f, e, d, c, b')
 
+    @patch('subprocess.Popen')
+    def test_copy_reviewers(self, mock_popen):
+        usernames = Counter({'albertyw': 1, 'asdf': 2})
+        reviewers.show_reviewers(usernames, True)
+        self.assertTrue(mock_popen.called)
+
 
 class TestMain(unittest.TestCase):
     @patch('builtins.print')
