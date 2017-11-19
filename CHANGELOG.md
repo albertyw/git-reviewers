@@ -1,6 +1,13 @@
 CHANGELOG.md
 ============
 
+v0.5.0 (2017-11-18)
+-------------------
+
+ - Add `--copy` flag to copy reviewers to OS clipboard
+ - Various refactors and minor fixes
+
+
 v0.4.0 (2017-11-13)
 -------------------
 
