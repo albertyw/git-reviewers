@@ -123,12 +123,16 @@ def show_reviewers(reviewers, copy_clipboard):
     reviewer_string = ", ".join(reviewer_list)
     print(reviewer_string)
 
-    if copy_clipboard:
+    if not copy_clipboard:
+        return
+    try:
         p = subprocess.Popen(
             ['pbcopy', 'w'],
             stdin=subprocess.PIPE, close_fds=True
         )
         p.communicate(input=reviewer_string)
+    except FileNotFoundError:
+        pass
 
 
 def main() -> None:
@@ -144,7 +148,7 @@ def main() -> None:
     )
     parser.add_argument(
         '-c', '--copy',
-        type=bool, default=False,
+        default=False, action='store_true',
         help='Copy the list of reviewers to clipboard, if available',
     )
     args = parser.parse_args()
