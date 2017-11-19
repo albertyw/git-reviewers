@@ -153,6 +153,12 @@ class TestShowReviewers(unittest.TestCase):
         reviewers.show_reviewers(usernames, True)
         self.assertTrue(mock_popen.called)
 
+    @patch('subprocess.Popen')
+    def test_copy_reviewers_no_pbcopy(self, mock_popen):
+        usernames = Counter({'albertyw': 1, 'asdf': 2})
+        mock_popen.side_effect = FileNotFoundError
+        reviewers.show_reviewers(usernames, True)
+
 
 class TestMain(unittest.TestCase):
     @patch('builtins.print')
