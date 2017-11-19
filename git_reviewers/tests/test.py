@@ -136,7 +136,7 @@ class TestShowReviewers(unittest.TestCase):
     @patch('builtins.print')
     def test_show_reviewers(self, mock_print):
         usernames = Counter({'albertyw': 1, 'asdf': 2})
-        reviewers.show_reviewers(usernames)
+        reviewers.show_reviewers(usernames, False)
         mock_print.assert_called_with('asdf, albertyw')
 
     @patch('builtins.print')
@@ -144,8 +144,20 @@ class TestShowReviewers(unittest.TestCase):
         usernames = Counter(
             {'a': 1, 'b': 2, 'c': 3, 'd': 4, 'e': 5, 'f': 6, 'g': 7, 'h': 8}
         )
-        reviewers.show_reviewers(usernames)
+        reviewers.show_reviewers(usernames, False)
         mock_print.assert_called_with('h, g, f, e, d, c, b')
+
+    @patch('subprocess.Popen')
+    def test_copy_reviewers(self, mock_popen):
+        usernames = Counter({'albertyw': 1, 'asdf': 2})
+        reviewers.show_reviewers(usernames, True)
+        self.assertTrue(mock_popen.called)
+
+    @patch('subprocess.Popen')
+    def test_copy_reviewers_no_pbcopy(self, mock_popen):
+        usernames = Counter({'albertyw': 1, 'asdf': 2})
+        mock_popen.side_effect = FileNotFoundError
+        reviewers.show_reviewers(usernames, True)
 
 
 class TestMain(unittest.TestCase):
