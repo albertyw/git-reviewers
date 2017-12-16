@@ -20,10 +20,7 @@ Usage
 
 ::
 
-    Usage: git reviewers [-h] [--path PATH]
-
-If ``--path`` is called, then its value is be used to compute the
-relative path to the current git repository.
+    Usage: git reviewers [-h]
 
 Development
 -----------

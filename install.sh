@@ -7,4 +7,4 @@ REPOSITORY_LOCATION="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 git config --global \
     alias.reviewers \
-    "!"$REPOSITORY_LOCATION"/git_reviewers/reviewers.py --path=\${GIT_PREFIX:-./}"
+    "!"$REPOSITORY_LOCATION"/git_reviewers/reviewers.py"
