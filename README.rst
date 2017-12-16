@@ -20,7 +20,16 @@ Usage
 
 ::
 
-    Usage: git reviewers [-h]
+    Usage: reviewers.py [-h] [-v] [-i IGNORE] [-c]
+
+    Suggest reviewers for your diff. https://github.com/albertyw/git-reviewers
+
+    optional arguments:
+      -h, --help            show this help message and exit
+      -v, --version         show program's version number and exit
+      -i IGNORE, --ignore IGNORE
+                            ignore a list of reviewers (comma separated)
+      -c, --copy            Copy the list of reviewers to clipboard, if available
 
 Development
 -----------
