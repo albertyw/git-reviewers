@@ -6,7 +6,8 @@ git-reviewers
 |Codeship Status for albertyw/git-reviewers| |Dependency Status| |Code
 Climate| |Test Coverage|
 
-Tool to suggest code reviewers for your code depending on your diff
+Tool to suggest code reviewers for your code depending on your diff.
+See also, git-browse_.
 
 Installation
 ------------
@@ -63,6 +64,7 @@ Publishing
     twine upload dist/*
 
 .. _dotfiles: https://github.com/albertyw/dotfiles
+.. _git-browse: https://github.com/albertyw/git-browse
 
 .. |PyPI| image:: https://img.shields.io/pypi/v/git-reviewers.svg
    :target: https://github.com/albertyw/git-reviewers
