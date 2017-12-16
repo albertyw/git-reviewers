@@ -31,6 +31,20 @@ Usage
                             ignore a list of reviewers (comma separated)
       -c, --copy            Copy the list of reviewers to clipboard, if available
 
+Finders
+-------
+
+``git-reviewers`` is componsed of a set of strategies for generating lists of
+reviewers, or Finders.  They return a weighted set of reviewers which is then
+sorted and recommended to you.  They include:
+
+ - ``FindDiffLogReviewers`` - Generate a list of reviewers based on committers
+   to your staged (modified but not committed) files
+ - ``FindLogReviewers`` - Generate a list of reviewers based on committers to
+   your committed (but not merged with master) files
+ - ``FindArcCommitReviewers`` - Generate reviewers based on arc commit messages
+   for files which you have modified on your branch
+
 Development
 -----------
 
