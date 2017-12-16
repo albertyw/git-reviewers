@@ -79,14 +79,6 @@ class FindFileLogReviewers(FindReviewers):
         return reviewers
 
 
-class FindDiffLogReviewers(FindFileLogReviewers):
-    def get_changed_files(self) -> List[str]:
-        """ Find the non-committed changed files """
-        git_diff_files_command = ['git', 'diff-files', '--name-only']
-        git_diff_files = self.run_command(git_diff_files_command)
-        return git_diff_files
-
-
 class FindLogReviewers(FindFileLogReviewers):
     def get_changed_files(self) -> List[str]:
         """ Find the changed files between current status and master """
@@ -153,7 +145,7 @@ def main() -> None:
     )
     args = parser.parse_args()
 
-    finders = [FindDiffLogReviewers, FindLogReviewers, FindArcCommitReviewers]
+    finders = [FindLogReviewers, FindArcCommitReviewers]
     reviewers = Counter()  # type: typing.Counter[str]
     for finder in finders:
         finder_reviewers = finder().get_reviewers()

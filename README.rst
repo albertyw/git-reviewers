@@ -38,8 +38,6 @@ Finders
 reviewers, or Finders.  They return a weighted set of reviewers which is then
 sorted and recommended to you.  They include:
 
- - ``FindDiffLogReviewers`` - Generate a list of reviewers based on committers
-   to your staged (modified but not committed) files
  - ``FindLogReviewers`` - Generate a list of reviewers based on committers to
    your committed (but not merged with master) files
  - ``FindArcCommitReviewers`` - Generate reviewers based on arc commit messages

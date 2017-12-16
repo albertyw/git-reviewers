@@ -83,21 +83,6 @@ class TestFindLogReviewers(unittest.TestCase):
         self.assertEqual(users, reviewers)
 
 
-class TestFindDiffLogReviewers(unittest.TestCase):
-    def setUp(self):
-        self.finder = reviewers.FindDiffLogReviewers()
-
-    @patch('subprocess.run')
-    def test_gets_diff_files(self, mock_run):
-        process = MagicMock()
-        output = b'README.rst\ngit_reviewers/reviewers.py\n'
-        process.stdout = output
-        mock_run.return_value = process
-        diff_files = self.finder.get_changed_files()
-        expected = ['README.rst', 'git_reviewers/reviewers.py']
-        self.assertEqual(diff_files, expected)
-
-
 class TestLogReviewers(unittest.TestCase):
     def setUp(self):
         self.finder = reviewers.FindLogReviewers()
