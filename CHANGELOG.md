@@ -1,6 +1,15 @@
 CHANGELOG.md
 ============
 
+v0.6.0 (2017-12-17)
+-------------------
+
+ - Remove `FindDiffLogReviewers` because it overlaps with `FindLogReviewers`
+ - Remove `--path` from installation script and readme
+ - Update readme
+ - Update mypy dependency
+
+
 v0.5.0 (2017-11-18)
 -------------------
 
