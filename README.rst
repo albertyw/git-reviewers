@@ -13,7 +13,7 @@ Installation
 ------------
 
 First clone this repository to somewhere on your system
-(perhaps in your `dotfiles <https://github.com/albertyw/dotfiles>`__
+(perhaps in your dotfiles_
 repository), then run ``<REPOSITORY_LOCATION>/install.sh``.
 
 Usage
