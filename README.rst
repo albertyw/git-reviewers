@@ -6,7 +6,7 @@ git-reviewers
 |Codeship Status for albertyw/git-reviewers| |Dependency Status| |Code
 Climate| |Test Coverage|
 
-Tool to suggest code reviewers for your code depending on your diff.
+Intelligently find code reviewers.
 See also, git-browse_.
 
 Installation
