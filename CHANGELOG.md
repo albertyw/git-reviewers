@@ -1,6 +1,12 @@
 CHANGELOG.md
 ============
 
+v0.6.1 (2017-12-25)
+-------------------
+
+ - Make install.sh accept a path for reviewers.py
+
+
 v0.6.0 (2017-12-17)
 -------------------
 
