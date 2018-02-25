@@ -79,6 +79,8 @@ Publishing
     python setup.py sdist bdist_wheel
     twine upload dist/*
 
+Need to also update `albertyw/homebrew-albertyw <https://github.com/albertyw/homebrew-albertyw>`_
+
 .. _dotfiles: https://github.com/albertyw/dotfiles
 .. _git-browse: https://github.com/albertyw/git-browse
 
