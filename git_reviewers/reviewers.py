@@ -39,11 +39,12 @@ class FindReviewers():
             return email[:email.find('@')]
         return email
 
-    def check_phabricator_activated(self, username: str):
+    def check_phabricator_activated(self, username):
         phab_command = ['arc', 'call-conduit user.search']
         request = '{"constraints": {"usernames": ["%s"]}}' % username
-        output = self.run_command(request)
-        output_str = ''.join(output_str)
+        process = subprocess.run(phab_command, stdout=subprocess.PIPE)
+        stdout, stderr = process.communicate(request)
+        output_str = stdout.decode("utf-8").strip()
         phab_output = json.loads(output_str)
         roles = phab_output['response']['data'][0]['fields']['roles']
         return 'disabled' not in roles
@@ -163,7 +164,7 @@ def main() -> None:
         if finder == FindArcCommitReviewers and finder_reviewers:
             phabricator = True
     if phabricator:
-        [reviewers.remove(reviewer) for reviewer in reviewers if finder.check_phabricator_activated(reviewer)]
+        [reviewers.remove(reviewer) for reviewer in reviewers if finder().check_phabricator_activated(reviewer)]
     for ignore in args.ignore.split(','):
         del reviewers[ignore]
     show_reviewers(reviewers, args.copy)
