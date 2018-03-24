@@ -53,7 +53,7 @@ class FindFileLogReviewers(FindReviewers):
     def get_log_reviewers_from_file(self, file_path):
         # type: (str) -> typing.Counter[str]
         """ Find the reviewers based on the git log for a file """
-        git_shortlog_command = ['git', 'shortlog', '-sne', file_path]
+        git_shortlog_command = ['git', 'shortlog', '-sne', '--', file_path]
         git_shortlog = self.run_command(git_shortlog_command)
         users = dict(
             self.extract_username_from_shortlog(shortlog)
@@ -94,7 +94,7 @@ class FindArcCommitReviewers(FindLogReviewers):
     """
     def get_log_reviewers_from_file(self, file_path):
         # type: (str) -> typing.Counter[str]
-        git_commit_messages_command = ['git', 'log', '--all', file_path]
+        git_commit_messages_command = ['git', 'log', '--all', '--', file_path]
         git_commit_messages = self.run_command(git_commit_messages_command)
         reviewers_identifier = 'Reviewed By: '
         reviewers = Counter()  # type: typing.Counter[str]
