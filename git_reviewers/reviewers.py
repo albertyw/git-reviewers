@@ -39,6 +39,15 @@ class FindReviewers():
             return email[:email.find('@')]
         return email
 
+    def check_phabricator_activated(self, username: str):
+        phab_command = ['arc', 'call-conduit user.search']
+        request = '{"constraints": {"usernames": ["%s"]}}' % username
+        output = self.run_command(request)
+        output_str = ''.join(output_str)
+        phab_output = json.loads(output_str)
+        roles = phab_output['response']['data'][0]['fields']['roles']
+        return 'disabled' not in roles
+
 
 class FindFileLogReviewers(FindReviewers):
     def extract_username_from_shortlog(self, shortlog: str) -> Tuple[str, int]:
@@ -145,11 +154,16 @@ def main() -> None:
     )
     args = parser.parse_args()
 
+    phabricator = False
     finders = [FindLogReviewers, FindArcCommitReviewers]
     reviewers = Counter()  # type: typing.Counter[str]
     for finder in finders:
         finder_reviewers = finder().get_reviewers()
         reviewers.update(finder_reviewers)
+        if finder == FindArcCommitReviewers and finder_reviewers:
+            phabricator = True
+    if phabricator:
+        [reviewers.remove(reviewer) for reviewer in reviewers if finder.check_phabricator_activated(reviewer)]
     for ignore in args.ignore.split(','):
         del reviewers[ignore]
     show_reviewers(reviewers, args.copy)
