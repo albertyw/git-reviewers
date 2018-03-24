@@ -168,8 +168,14 @@ class TestMain(unittest.TestCase):
             'git_reviewers.reviewers.'
             'FindFileLogReviewers.get_reviewers'
         )
+        phabricator_activated = (
+            'git_reviewers.reviewers.'
+            'FindArcCommitReviewers.check_phabricator_activated'
+        )
         with patch.object(sys, 'argv', ['reviewers.py', '-i', 'asdf']):
             with patch(get_reviewers) as mock_get_reviewers:
-                mock_get_reviewers.return_value = counter
-                reviewers.main()
+                with patch(phabricator_activated) as mock_phabricator_activated:
+                    mock_phabricator_activated.return_value = False
+                    mock_get_reviewers.return_value = counter
+                    reviewers.main()
         self.assertEqual(mock_print.call_args[0][0], 'qwer')
