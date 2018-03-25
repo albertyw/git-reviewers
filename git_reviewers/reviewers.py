@@ -40,7 +40,7 @@ class FindReviewers():
             return email[:email.find('@')]
         return email
 
-    def check_phabricator_activated(self, username):
+    def check_phabricator_activated(self, username: str) -> bool:
         phab_command = ['arc', 'call-conduit', 'user.search']
         request = '{"constraints": {"usernames": ["%s"]}}' % username
         process = subprocess.Popen(
