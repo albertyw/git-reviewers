@@ -2,6 +2,7 @@
 
 import argparse
 from collections import Counter
+import json
 import subprocess
 import sys
 
@@ -38,6 +39,22 @@ class FindReviewers():
         if domain in STRIP_DOMAIN_USERNAMES:
             return email[:email.find('@')]
         return email
+
+    def check_phabricator_activated(self, username: str) -> bool:
+        phab_command = ['arc', 'call-conduit', 'user.search']
+        request = '{"constraints": {"usernames": ["%s"]}}' % username
+        process = subprocess.Popen(
+            phab_command,
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE)
+        stdout, stderr = process.communicate(request.encode("utf-8"))
+        output_str = stdout.decode("utf-8").strip()
+        phab_output = json.loads(output_str)
+        data = phab_output['response']['data']
+        if not data:
+            return True
+        roles = data[0]['fields']['roles']
+        return 'disabled' not in roles
 
 
 class FindFileLogReviewers(FindReviewers):
@@ -145,11 +162,18 @@ def main() -> None:
     )
     args = parser.parse_args()
 
+    phabricator = False
     finders = [FindLogReviewers, FindArcCommitReviewers]
     reviewers = Counter()  # type: typing.Counter[str]
     for finder in finders:
         finder_reviewers = finder().get_reviewers()
         reviewers.update(finder_reviewers)
+        if finder == FindArcCommitReviewers and finder_reviewers:
+            phabricator = True
+    if phabricator:
+        for reviewer in list(reviewers):
+            if not finder().check_phabricator_activated(reviewer):
+                del reviewers[reviewer]
     for ignore in args.ignore.split(','):
         del reviewers[ignore]
     show_reviewers(reviewers, args.copy)
