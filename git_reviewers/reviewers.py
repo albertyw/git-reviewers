@@ -43,7 +43,10 @@ class FindReviewers():
     def check_phabricator_activated(self, username):
         phab_command = ['arc', 'call-conduit', 'user.search']
         request = '{"constraints": {"usernames": ["%s"]}}' % username
-        process = subprocess.Popen(phab_command, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+        process = subprocess.Popen(
+            phab_command,
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE)
         stdout, stderr = process.communicate(request.encode("utf-8"))
         output_str = stdout.decode("utf-8").strip()
         phab_output = json.loads(output_str)

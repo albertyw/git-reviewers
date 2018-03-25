@@ -191,14 +191,14 @@ class TestMain(unittest.TestCase):
         )
         with patch.object(sys, 'argv', ['reviewers.py', '-i', 'asdf']):
             with patch(get_reviewers) as mock_get_reviewers:
-                with patch(phabricator_activated) as mock_phabricator_activated:
-                    mock_phabricator_activated.return_value = True
+                with patch(phabricator_activated) as mock_phab:
+                    mock_phab.return_value = True
                     mock_get_reviewers.return_value = counter
                     reviewers.main()
         self.assertEqual(mock_print.call_args[0][0], 'qwer')
 
     @patch('builtins.print')
-    def test_ignore_reviewers(self, mock_print):
+    def test_phabricator_disabled_reviewers(self, mock_print):
         counter = Counter({'asdf': 1, 'qwer': 1})
         get_reviewers = (
             'git_reviewers.reviewers.'
@@ -210,8 +210,8 @@ class TestMain(unittest.TestCase):
         )
         with patch.object(sys, 'argv', ['reviewers.py']):
             with patch(get_reviewers) as mock_get_reviewers:
-                with patch(phabricator_activated) as mock_phabricator_activated:
-                    mock_phabricator_activated.return_value = False
+                with patch(phabricator_activated) as mock_phab:
+                    mock_phab.return_value = False
                     mock_get_reviewers.return_value = counter
                     reviewers.main()
         self.assertEqual(mock_print.call_args[0][0], '')
