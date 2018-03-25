@@ -1,5 +1,6 @@
 from collections import Counter
 import os
+import json
 import sys
 import unittest
 from unittest.mock import patch, MagicMock
@@ -39,6 +40,22 @@ class TestFindReviewers(unittest.TestCase):
 
     def test_extract_uber_username_from_email(self):
         self.check_extract_username('asdf@uber.com', 'asdf')
+
+    @patch('subprocess.Popen')
+    def test_check_phabricator_activated(self, mock_popen):
+        data = {'response': {'data': [{'fields': {'roles': ['activated']}}]}}
+        data = json.dumps(data).encode("utf-8")
+        mock_popen().communicate.return_value = [data, '']
+        activated = self.finder.check_phabricator_activated('asdf')
+        self.assertTrue(activated)
+
+    @patch('subprocess.Popen')
+    def test_check_phabricator_activated_none(self, mock_popen):
+        data = {'response': {'data': []}}
+        data = json.dumps(data).encode("utf-8")
+        mock_popen().communicate.return_value = [data, '']
+        activated = self.finder.check_phabricator_activated('asdf')
+        self.assertTrue(activated)
 
 
 class TestFindLogReviewers(unittest.TestCase):
@@ -175,7 +192,26 @@ class TestMain(unittest.TestCase):
         with patch.object(sys, 'argv', ['reviewers.py', '-i', 'asdf']):
             with patch(get_reviewers) as mock_get_reviewers:
                 with patch(phabricator_activated) as mock_phabricator_activated:
-                    mock_phabricator_activated.return_value = False
+                    mock_phabricator_activated.return_value = True
                     mock_get_reviewers.return_value = counter
                     reviewers.main()
         self.assertEqual(mock_print.call_args[0][0], 'qwer')
+
+    @patch('builtins.print')
+    def test_ignore_reviewers(self, mock_print):
+        counter = Counter({'asdf': 1, 'qwer': 1})
+        get_reviewers = (
+            'git_reviewers.reviewers.'
+            'FindFileLogReviewers.get_reviewers'
+        )
+        phabricator_activated = (
+            'git_reviewers.reviewers.'
+            'FindArcCommitReviewers.check_phabricator_activated'
+        )
+        with patch.object(sys, 'argv', ['reviewers.py']):
+            with patch(get_reviewers) as mock_get_reviewers:
+                with patch(phabricator_activated) as mock_phabricator_activated:
+                    mock_phabricator_activated.return_value = False
+                    mock_get_reviewers.return_value = counter
+                    reviewers.main()
+        self.assertEqual(mock_print.call_args[0][0], '')
