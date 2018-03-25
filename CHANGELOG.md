@@ -1,6 +1,15 @@
 CHANGELOG.md
 ============
 
+v0.7.0 (2018-03-24)
+-------------------
+
+ - Add homebrew
+ - Be able to work with deleted files
+ - Prune users that are disabled in phabricator
+ - Update test dependencies
+
+
 v0.6.1 (2017-12-25)
 -------------------
 
