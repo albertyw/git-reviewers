@@ -143,6 +143,30 @@ def show_reviewers(reviewer_list, copy_clipboard):
         pass
 
 
+def get_reviewers(ignores):  # type: (str) -> List[str]
+    phabricator = False
+    finders = [FindLogReviewers, FindArcCommitReviewers]
+    reviewers = Counter()  # type: typing.Counter[str]
+    for finder in finders:
+        finder_reviewers = finder().get_reviewers()
+        reviewers.update(finder_reviewers)
+        if finder == FindArcCommitReviewers and finder_reviewers:
+            phabricator = True
+
+    reviewers_list = []  # type: List[str]
+    ignore_list = ignores.split(',')
+    most_common = [x[0] for x in reviewers.most_common()]
+    for reviewer in most_common:
+        if reviewer in ignore_list:
+            continue
+        if phabricator and not finder().check_phabricator_activated(reviewer):
+            continue
+        reviewers_list.append(reviewer)
+        if len(reviewers_list) > REVIEWERS_LIMIT:
+            break
+    return reviewers_list
+
+
 def main() -> None:
     description = "Suggest reviewers for your diff.\n"
     description += "https://github.com/albertyw/git-reviewers"
@@ -160,27 +184,7 @@ def main() -> None:
         help='Copy the list of reviewers to clipboard, if available',
     )
     args = parser.parse_args()
-
-    phabricator = False
-    finders = [FindLogReviewers, FindArcCommitReviewers]
-    reviewers = Counter()  # type: typing.Counter[str]
-    for finder in finders:
-        finder_reviewers = finder().get_reviewers()
-        reviewers.update(finder_reviewers)
-        if finder == FindArcCommitReviewers and finder_reviewers:
-            phabricator = True
-
-    reviewers_list = []  # type: List[str]
-    ignore_list = args.ignore.split(',')
-    most_common = [x[0] for x in reviewers.most_common()]
-    for reviewer in most_common:
-        if reviewer in ignore_list:
-            continue
-        if phabricator and not finder().check_phabricator_activated(reviewer):
-            continue
-        reviewers_list.append(reviewer)
-        if len(reviewers_list) > REVIEWERS_LIMIT:
-            break
+    reviewers_list = get_reviewers(args.ignore)
     show_reviewers(reviewers_list, args.copy)
 
 
