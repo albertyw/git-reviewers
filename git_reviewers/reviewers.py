@@ -170,12 +170,12 @@ def main() -> None:
         reviewers.update(finder_reviewers)
         if finder == FindArcCommitReviewers and finder_reviewers:
             phabricator = True
+    for ignore in args.ignore.split(','):
+        del reviewers[ignore]
     if phabricator:
         for reviewer in list(reviewers):
             if not finder().check_phabricator_activated(reviewer):
                 del reviewers[reviewer]
-    for ignore in args.ignore.split(','):
-        del reviewers[ignore]
     show_reviewers(reviewers, args.copy)
 
 
