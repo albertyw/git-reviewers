@@ -125,10 +125,9 @@ class FindArcCommitReviewers(FindLogReviewers):
         return reviewers
 
 
-def show_reviewers(reviewers, copy_clipboard):
-    # type: (typing.Counter[str], bool) -> None
+def show_reviewers(reviewer_list, copy_clipboard):
+    # type: (List[str], bool) -> None
     """ Output the reviewers to stdout and optionally to OS clipboard """
-    reviewer_list = [x[0] for x in reviewers.most_common(REVIEWERS_LIMIT)]
     reviewer_string = ", ".join(reviewer_list)
     print(reviewer_string)
 
@@ -170,13 +169,19 @@ def main() -> None:
         reviewers.update(finder_reviewers)
         if finder == FindArcCommitReviewers and finder_reviewers:
             phabricator = True
-    for ignore in args.ignore.split(','):
-        del reviewers[ignore]
-    if phabricator:
-        for reviewer in list(reviewers):
-            if not finder().check_phabricator_activated(reviewer):
-                del reviewers[reviewer]
-    show_reviewers(reviewers, args.copy)
+
+    reviewers_list = []  # type: List[str]
+    ignore_list = args.ignore.split(',')
+    most_common = [x[0] for x in reviewers.most_common()]
+    for reviewer in most_common:
+        if reviewer in ignore_list:
+            continue
+        if phabricator and not finder().check_phabricator_activated(reviewer):
+            continue
+        reviewers_list.append(reviewer)
+        if len(reviewers_list) > REVIEWERS_LIMIT:
+            break
+    show_reviewers(reviewers_list, args.copy)
 
 
 if __name__ == "__main__":
