@@ -138,7 +138,7 @@ def show_reviewers(reviewer_list, copy_clipboard):
             ['pbcopy', 'w'],
             stdin=subprocess.PIPE, close_fds=True
         )
-        p.communicate(input=reviewer_string)
+        p.communicate(input=reviewer_string.encode('utf-8'))
     except FileNotFoundError:
         pass
 
