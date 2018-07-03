@@ -143,12 +143,17 @@ def show_reviewers(reviewer_list, copy_clipboard):
         pass
 
 
-def get_reviewers(ignores):  # type: (str) -> List[str]
+def get_reviewers(ignores, verbose):  # type: (str, bool) -> List[str]
     phabricator = False
     finders = [FindLogReviewers, FindArcCommitReviewers]
     reviewers = Counter()  # type: typing.Counter[str]
     for finder in finders:
         finder_reviewers = finder().get_reviewers()
+        if verbose:
+            print(
+                "Reviewers from %s: %s" %
+                (finder.__name__, dict(finder_reviewers))
+            )
         reviewers.update(finder_reviewers)
         if finder == FindArcCommitReviewers and finder_reviewers:
             phabricator = True
@@ -175,6 +180,9 @@ def main() -> None:
         '-v', '--version', action='version', version=__version__,
     )
     parser.add_argument(
+        '--verbose', default=False, action='store_true', help='verbose mode',
+    )
+    parser.add_argument(
         '-i', '--ignore',
         default='', help='ignore a list of reviewers (comma separated)',
     )
@@ -184,7 +192,7 @@ def main() -> None:
         help='Copy the list of reviewers to clipboard, if available',
     )
     args = parser.parse_args()
-    reviewers_list = get_reviewers(args.ignore)
+    reviewers_list = get_reviewers(args.ignore, args.verbose)
     show_reviewers(reviewers_list, args.copy)
 
 

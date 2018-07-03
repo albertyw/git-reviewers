@@ -154,6 +154,32 @@ class TestShowReviewers(unittest.TestCase):
         reviewers.show_reviewers(usernames, True)
 
 
+class TestGetReviewers(unittest.TestCase):
+    @patch('builtins.print')
+    def test_verbose_reviewers(self, mock_print):
+        counter = Counter({'asdf': 1, 'qwer': 1})
+        get_reviewers = (
+            'git_reviewers.reviewers.'
+            'FindFileLogReviewers.get_reviewers'
+        )
+        phabricator_activated = (
+            'git_reviewers.reviewers.'
+            'FindArcCommitReviewers.check_phabricator_activated'
+        )
+        with patch.object(sys, 'argv', ['reviewers.py', '--verbose']):
+            with patch(get_reviewers) as mock_get_reviewers:
+                with patch(phabricator_activated) as mock_phab:
+                    mock_phab.return_value = True
+                    mock_get_reviewers.return_value = counter
+                    reviewers.get_reviewers('', True)
+        self.assertEqual(len(mock_print.call_args), 2)
+        self.assertEqual(
+            mock_print.call_args[0][0],
+            'Reviewers from FindArcCommitReviewers: %s' %
+            "{'asdf': 1, 'qwer': 1}"
+        )
+
+
 class TestMain(unittest.TestCase):
     @patch('builtins.print')
     def test_main(self, mock_print):
