@@ -1,6 +1,14 @@
 CHANGELOG.md
 ============
 
+v0.9.0 (2018-07-03)
+-------------------
+
+ - Add verbose mode
+ - Fixes for copying data to clipboard
+ - Update test dependencies
+
+
 v0.8.0 (2018-03-27)
 -------------------
 
