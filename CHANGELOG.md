@@ -1,6 +1,12 @@
 CHANGELOG.md
 ============
 
+v0.10.0 (2018-10-14)
+--------------------
+
+ - Add ability to look at entire repository history when computing reviewers
+
+
 v0.9.0 (2018-07-03)
 -------------------
 
