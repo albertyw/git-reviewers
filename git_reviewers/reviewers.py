@@ -101,6 +101,18 @@ class FindLogReviewers(FindFileLogReviewers):
         """ Find the changed files between current status and master """
         git_diff_files_command = ['git', 'diff', 'master', '--name-only']
         git_diff_files = self.run_command(git_diff_files_command)
+        if not git_diff_files:
+            return FindHistoricalReviewers().get_changed_files()
+        return git_diff_files
+
+
+class FindHistoricalReviewers(FindFileLogReviewers):
+    def get_changed_files(self) -> List[str]:
+        """Find all git files """
+        git_diff_files_command = [
+            'git', 'ls-tree', '-r', 'master', '--name-only'
+        ]
+        git_diff_files = self.run_command(git_diff_files_command)
         return git_diff_files
 
 
