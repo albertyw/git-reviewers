@@ -110,6 +110,16 @@ class TestLogReviewers(unittest.TestCase):
         files = self.finder.get_changed_files()
         self.assertEqual(files, ['README.rst', 'setup.py'])
 
+    @patch('git_reviewers.reviewers.FindHistoricalReviewers')
+    @patch('subprocess.run')
+    def test_no_diffs(self, mock_run, mock_historical):
+        process = MagicMock()
+        process.stdout = b''
+        mock_run.return_value = process
+        mock_historical().get_changed_files.return_value = ['asdf']
+        files = self.finder.get_changed_files()
+        self.assertEqual(files, ['asdf'])
+
 
 class TestFindArcCommitReviewers(unittest.TestCase):
     def setUp(self):
