@@ -121,6 +121,17 @@ class TestLogReviewers(unittest.TestCase):
         self.assertEqual(files, ['asdf'])
 
 
+class TestHistoricalReviewers(unittest.TestCase):
+    def setUp(self):
+        self.finder = reviewers.FindHistoricalReviewers()
+
+    def test_get_changed_files(self):
+        changed_files = ['README.rst', 'setup.py']
+        self.finder.run_command = MagicMock(return_value=changed_files)
+        files = self.finder.get_changed_files()
+        self.assertEqual(files, ['README.rst', 'setup.py'])
+
+
 class TestFindArcCommitReviewers(unittest.TestCase):
     def setUp(self):
         self.finder = reviewers.FindArcCommitReviewers()
