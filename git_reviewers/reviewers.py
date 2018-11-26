@@ -185,8 +185,25 @@ def get_reviewers(ignores, verbose):  # type: (List[str], bool) -> List[str]
 
 def read_configs(args):
     # type: (argparse.Namespace) -> Tuple[bool, List[str], bool]
+    try:
+        with open(args.json, 'r') as config_handle:
+            config_data = config_handle.read()
+        config = json.loads(config_data)
+    except FileNotFoundError:
+        config = {}
+
+    verbose = args.verbose
+    if verbose is None:
+        verbose = config.get('verbose', False)
+
+    copy = args.copy
+    if copy is None:
+        copy = config.get('copy', False)
+
     ignores = args.ignore.split(',')
-    return args.verbose, ignores, args.copy
+    ignores += config.get('ignore', [])
+
+    return verbose, ignores, copy
 
 
 def main() -> None:
@@ -197,7 +214,7 @@ def main() -> None:
         '-v', '--version', action='version', version=__version__,
     )
     parser.add_argument(
-        '--verbose', default=False, action='store_true', help='verbose mode',
+        '--verbose', default=None, action='store_true', help='verbose mode',
     )
     parser.add_argument(
         '-i', '--ignore',
@@ -205,11 +222,12 @@ def main() -> None:
     )
     parser.add_argument(
         '-j', '--json',
-        default='', help='json file to read configs from, overridden by CLI flags',
+        default='',
+        help='json file to read configs from, overridden by CLI flags',
     )
     parser.add_argument(
         '-c', '--copy',
-        default=False, action='store_true',
+        default=None, action='store_true',
         help='Copy the list of reviewers to clipboard, if available',
     )
     args = parser.parse_args()
