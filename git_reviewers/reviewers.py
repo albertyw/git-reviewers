@@ -202,6 +202,7 @@ def read_configs(args):
 
     ignores = args.ignore.split(',')
     ignores += config.get('ignore', [])
+    ignores = [x for x in ignores if x]
 
     return verbose, ignores, copy
 
