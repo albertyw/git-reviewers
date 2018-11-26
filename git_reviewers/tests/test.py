@@ -2,6 +2,7 @@ from collections import Counter
 import os
 import json
 import sys
+import tempfile
 import unittest
 from unittest.mock import patch, MagicMock
 
@@ -199,6 +200,36 @@ class TestGetReviewers(unittest.TestCase):
             'Reviewers from FindArcCommitReviewers: %s' %
             "{'asdf': 1, 'qwer': 1}"
         )
+
+
+class TestReadConfigs(unittest.TestCase):
+    def setUp(self):
+        self.config_file = tempfile.NamedTemporaryFile('w')
+        self.mock_args = MagicMock()
+        self.mock_args.verbose = None
+        self.mock_args.ignore = ''
+        self.mock_args.json = ''
+        self.mock_args.copy = None
+
+    def tearDown(self):
+        self.config_file.close()
+
+    def test_read_configs_args(self):
+        self.mock_args.verbose = True
+        verbose, ignores, copy = reviewers.read_configs(self.mock_args)
+        self.assertTrue(verbose)
+        self.assertEqual(ignores, [])
+        self.assertFalse(copy)
+
+    def test_read_json(self):
+        self.mock_args.ignore = 'a,b'
+        self.mock_args.json = self.config_file.name
+        config_file_data = {'verbose': True, 'ignore': ['c', 'd']}
+        self.config_file.write(json.dumps(config_file_data))
+        self.config_file.flush()
+        verbose, ignores, copy = reviewers.read_configs(self.mock_args)
+        self.assertTrue(verbose)
+        self.assertEqual(ignores, ['a', 'b', 'c', 'd'])
 
 
 class TestMain(unittest.TestCase):
