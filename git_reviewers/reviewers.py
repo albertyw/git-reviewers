@@ -204,6 +204,10 @@ def main() -> None:
         default='', help='ignore a list of reviewers (comma separated)',
     )
     parser.add_argument(
+        '-j', '--json',
+        default='', help='json file to read configs from, overridden by CLI flags',
+    )
+    parser.add_argument(
         '-c', '--copy',
         default=False, action='store_true',
         help='Copy the list of reviewers to clipboard, if available',
