@@ -155,7 +155,7 @@ def show_reviewers(reviewer_list, copy_clipboard):
         pass
 
 
-def get_reviewers(ignores, verbose):  # type: (str, bool) -> List[str]
+def get_reviewers(ignores, verbose):  # type: (List[str], bool) -> List[str]
     phabricator = False
     finders = [FindLogReviewers, FindArcCommitReviewers]
     reviewers = Counter()  # type: typing.Counter[str]
@@ -171,10 +171,9 @@ def get_reviewers(ignores, verbose):  # type: (str, bool) -> List[str]
             phabricator = True
 
     reviewers_list = []  # type: List[str]
-    ignore_list = ignores.split(',')
     most_common = [x[0] for x in reviewers.most_common()]
     for reviewer in most_common:
-        if reviewer in ignore_list:
+        if reviewer in ignores:
             continue
         if phabricator and not finder().check_phabricator_activated(reviewer):
             continue
@@ -182,6 +181,12 @@ def get_reviewers(ignores, verbose):  # type: (str, bool) -> List[str]
         if len(reviewers_list) > REVIEWERS_LIMIT:
             break
     return reviewers_list
+
+
+def read_configs(args):
+    # type: (argparse.Namespace) -> Tuple[bool, List[str], bool]
+    ignores = args.ignore.split(',')
+    return args.verbose, ignores, args.copy
 
 
 def main() -> None:
@@ -204,8 +209,9 @@ def main() -> None:
         help='Copy the list of reviewers to clipboard, if available',
     )
     args = parser.parse_args()
-    reviewers_list = get_reviewers(args.ignore, args.verbose)
-    show_reviewers(reviewers_list, args.copy)
+    verbose, ignores, copy = read_configs(args)
+    reviewers_list = get_reviewers(ignores, verbose)
+    show_reviewers(reviewers_list, copy)
 
 
 if __name__ == "__main__":
