@@ -1,6 +1,13 @@
 CHANGELOG.md
 ============
 
+v0.11.0 (2018-11-26)
+--------------------
+
+ - Add json config files
+ - Updates to test dependencies
+
+
 v0.10.0 (2018-10-14)
 --------------------
 

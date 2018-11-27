@@ -12,7 +12,7 @@ from typing import List, Tuple
 if sys.version_info < (3, 0): # NOQA pragma: no cover
     raise SystemError("Must be using Python 3")
 
-__version__ = '0.10.0'
+__version__ = '0.11.0'
 STRIP_DOMAIN_USERNAMES = ['uber.com']
 REVIEWERS_LIMIT = 7
 
