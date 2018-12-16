@@ -13,7 +13,7 @@ with open(os.path.join(here, 'README.rst'), encoding='utf-8') as f:
 
 # Package meta-data.
 NAME = 'git-reviewers'
-DESCRIPTION = 'Suggest reviewers for your git branch',
+DESCRIPTION = 'Suggest reviewers for your git branch'
 URL = 'https://github.com/albertyw/git-reviewers'
 EMAIL = 'git@albertyw.com'
 AUTHOR = 'Albert Wang'
