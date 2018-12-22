@@ -171,16 +171,14 @@ def get_reviewers(ignores, verbose):  # type: (List[str], bool) -> List[str]
         if finder == FindArcCommitReviewers and finder_reviewers:
             phabricator = True
 
-    reviewers_list = []  # type: List[str]
     most_common = [x[0] for x in reviewers.most_common()]
-    for reviewer in most_common:
-        if reviewer in ignores:
-            continue
-        if phabricator and not finder().check_phabricator_activated(reviewer):
-            continue
-        reviewers_list.append(reviewer)
-        if len(reviewers_list) > REVIEWERS_LIMIT:
-            break
+    most_common = [x for x in most_common if x not in ignores]
+    if phabricator:
+        most_common = [
+            x for x in most_common
+            if finder().check_phabricator_activated(x)
+        ]
+    reviewers_list = most_common[:REVIEWERS_LIMIT]
     return reviewers_list
 
 
