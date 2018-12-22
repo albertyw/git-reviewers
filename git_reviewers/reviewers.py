@@ -7,7 +7,7 @@ import subprocess
 import sys
 
 import typing  # NOQA
-from typing import List, Tuple
+from typing import Callable, List, Tuple
 
 if sys.version_info < (3, 0): # NOQA pragma: no cover
     raise SystemError("Must be using Python 3")
@@ -40,7 +40,7 @@ class FindReviewers():
             return email[:email.find('@')]
         return email
 
-    def check_phabricator_activated(self, username: str) -> bool:
+    def check_phabricator_activated(self, username: str) -> Callable[[], str]:
         """ Check whether a phabricator user has been activated by """
         phab_command = ['arc', 'call-conduit', 'user.search']
         request = '{"constraints": {"usernames": ["%s"]}}' % username
@@ -49,14 +49,28 @@ class FindReviewers():
             stdin=subprocess.PIPE,
             stdout=subprocess.PIPE)
         process.stdin.write(request.encode("utf-8"))
-        stdout, stderr = process.communicate()
-        output_str = stdout.decode("utf-8").strip()
-        phab_output = json.loads(output_str)
-        data = phab_output['response']['data']
-        if not data:
-            return True
-        roles = data[0]['fields']['roles']
-        return 'disabled' not in roles
+
+        def parse_phabricator():
+            stdout, stderr = process.communicate()
+            output_str = stdout.decode("utf-8").strip()
+            phab_output = json.loads(output_str)
+            data = phab_output['response']['data']
+            if not data:
+                return True
+            roles = data[0]['fields']['roles']
+            if 'disabled' not in roles:
+                return username
+            else:
+                return None
+        return parse_phabricator
+
+    def filter_phabricator_activated(self, usernames: List[str]) -> List[str]:
+        username_processes = [
+            self.check_phabricator_activated(x) for x in usernames
+        ]
+        usernames = [x() for x in username_processes]
+        usernames = [x for x in usernames if x]
+        return usernames
 
 
 class FindFileLogReviewers(FindReviewers):
@@ -176,10 +190,8 @@ def get_reviewers(ignores, verbose):  # type: (List[str], bool) -> List[str]
     most_common = [x[0] for x in reviewers.most_common()]
     most_common = [x for x in most_common if x not in ignores]
     if phabricator:
-        most_common = [
-            x for x in most_common
-            if finder().check_phabricator_activated(x)
-        ]
+        most_common = FindArcCommitReviewers() \
+                .filter_phabricator_activated(most_common)
     reviewers_list = most_common[:REVIEWERS_LIMIT]
     return reviewers_list
 

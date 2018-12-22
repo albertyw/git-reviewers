@@ -12,6 +12,12 @@ directory = os.path.dirname(os.path.realpath(__file__))
 BASE_DIRECTORY = os.path.normpath(os.path.join(directory, '..', '..'))
 
 
+def generate_check_process(username):
+    def process():
+        return username
+    return process
+
+
 class TestFindReviewers(unittest.TestCase):
     def setUp(self):
         self.finder = reviewers.FindReviewers()
@@ -191,7 +197,10 @@ class TestGetReviewers(unittest.TestCase):
         with patch.object(sys, 'argv', ['reviewers.py', '--verbose']):
             with patch(get_reviewers) as mock_get_reviewers:
                 with patch(phabricator_activated) as mock_phab:
-                    mock_phab.return_value = True
+                    mock_phab.side_effect = [
+                        generate_check_process('asdf'),
+                        generate_check_process('qwer'),
+                    ]
                     mock_get_reviewers.return_value = counter
                     reviewers.get_reviewers('', True)
         self.assertEqual(len(mock_print.call_args), 2)
@@ -262,7 +271,7 @@ class TestMain(unittest.TestCase):
         with patch.object(sys, 'argv', ['reviewers.py', '-i', 'asdf']):
             with patch(get_reviewers) as mock_get_reviewers:
                 with patch(phabricator_activated) as mock_phab:
-                    mock_phab.return_value = True
+                    mock_phab.side_effect = [generate_check_process('qwer')]
                     mock_get_reviewers.return_value = counter
                     reviewers.main()
         self.assertEqual(mock_print.call_args[0][0], 'qwer')
@@ -281,7 +290,10 @@ class TestMain(unittest.TestCase):
         with patch.object(sys, 'argv', ['reviewers.py']):
             with patch(get_reviewers) as mock_get_reviewers:
                 with patch(phabricator_activated) as mock_phab:
-                    mock_phab.return_value = False
+                    mock_phab.side_effect = [
+                        generate_check_process(None),
+                        generate_check_process(None),
+                    ]
                     mock_get_reviewers.return_value = counter
                     reviewers.main()
         self.assertEqual(mock_print.call_args[0][0], '')
