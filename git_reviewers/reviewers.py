@@ -47,7 +47,8 @@ class FindReviewers():
             phab_command,
             stdin=subprocess.PIPE,
             stdout=subprocess.PIPE)
-        stdout, stderr = process.communicate(request.encode("utf-8"))
+        process.stdin.write(request.encode("utf-8"))
+        stdout, stderr = process.communicate()
         output_str = stdout.decode("utf-8").strip()
         phab_output = json.loads(output_str)
         data = phab_output['response']['data']
