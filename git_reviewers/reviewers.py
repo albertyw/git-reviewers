@@ -41,6 +41,7 @@ class FindReviewers():
         return email
 
     def check_phabricator_activated(self, username: str) -> bool:
+        """ Check whether a phabricator user has been activated by """
         phab_command = ['arc', 'call-conduit', 'user.search']
         request = '{"constraints": {"usernames": ["%s"]}}' % username
         process = subprocess.Popen(
@@ -157,6 +158,7 @@ def show_reviewers(reviewer_list, copy_clipboard):
 
 
 def get_reviewers(ignores, verbose):  # type: (List[str], bool) -> List[str]
+    """ Main function to get reviewers for a repository """
     phabricator = False
     finders = [FindLogReviewers, FindArcCommitReviewers]
     reviewers = Counter()  # type: typing.Counter[str]
@@ -184,6 +186,7 @@ def get_reviewers(ignores, verbose):  # type: (List[str], bool) -> List[str]
 
 def read_configs(args):
     # type: (argparse.Namespace) -> Tuple[bool, List[str], bool]
+    """ Parse configs by joining config file against argparse """
     try:
         with open(args.json, 'r') as config_handle:
             config_data = config_handle.read()
@@ -207,6 +210,7 @@ def read_configs(args):
 
 
 def main() -> None:
+    """ Main entrypoint function to receive CLI arguments """
     description = "Suggest reviewers for your diff.\n"
     description += "https://github.com/albertyw/git-reviewers"
     parser = argparse.ArgumentParser(description=description)
