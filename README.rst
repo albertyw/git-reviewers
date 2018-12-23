@@ -60,6 +60,21 @@ sorted and recommended to you.  They include:
  - ``FindArcCommitReviewers`` - Generate reviewers based on arc commit messages
    for files which you have modified on your branch
 
+Configuration
+-------------
+
+``git-reviewers`` supports reading configuration from a configuration file
+with the ``--json`` flag.  The configuration file accepts json with the
+following fields (all fields optional):
+
+.. code:: json
+
+    {
+        "verbose": False,
+        "copy": False,
+        "ignore": ["a", "b", "c"]
+    }
+
 Development
 -----------
 
