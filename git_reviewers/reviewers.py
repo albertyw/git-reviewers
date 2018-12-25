@@ -51,7 +51,8 @@ class FindReviewers():
         process.stdin.write(request.encode("utf-8"))
         return process
 
-    def parse_phabricator(self, username: str, process: subprocess.Popen) -> str:
+    def parse_phabricator(self, username, process):
+        # type: (str, subprocess.Popen) -> str:
         stdout, stderr = process.communicate()
         output_str = stdout.decode("utf-8").strip()
         phab_output = json.loads(output_str)
@@ -65,9 +66,9 @@ class FindReviewers():
 
     def filter_phabricator_activated(self, usernames: List[str]) -> List[str]:
         username_processes = [
-            self.check_phabricator_activated(x) for x in usernames
+            (x, self.check_phabricator_activated(x)) for x in usernames
         ]
-        usernames = [self.parse_phabricator(*x) for x in zip(usernames, username_processes)]
+        usernames = [self.parse_phabricator(*x) for x in username_processes]
         usernames = [x for x in usernames if x]
         return usernames
 

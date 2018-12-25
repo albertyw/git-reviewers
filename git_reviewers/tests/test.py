@@ -184,12 +184,12 @@ class TestGetReviewers(unittest.TestCase):
             'git_reviewers.reviewers.'
             'FindFileLogReviewers.get_reviewers'
         )
-        phabricator_output = {'response': {'data': [{'fields': {'roles': ['activated']}}]}}
-        phabricator_stdout = json.dumps(phabricator_output).encode("utf-8")
+        data = {'response': {'data': [{'fields': {'roles': ['activated']}}]}}
+        data = json.dumps(data).encode("utf-8")
         with patch.object(sys, 'argv', ['reviewers.py', '--verbose']):
             with patch(get_reviewers) as mock_get_reviewers:
                 with patch('subprocess.Popen') as mock_popen:
-                    mock_popen().communicate.return_value = [phabricator_stdout, b'']
+                    mock_popen().communicate.return_value = [data, b'']
                     mock_get_reviewers.return_value = counter
                     reviewers.get_reviewers('', True)
         self.assertEqual(len(mock_print.call_args), 2)
@@ -253,12 +253,12 @@ class TestMain(unittest.TestCase):
             'git_reviewers.reviewers.'
             'FindFileLogReviewers.get_reviewers'
         )
-        phabricator_output = {'response': {'data': [{'fields': {'roles': ['activated']}}]}}
-        phabricator_stdout = json.dumps(phabricator_output).encode("utf-8")
+        data = {'response': {'data': [{'fields': {'roles': ['activated']}}]}}
+        data = json.dumps(data).encode("utf-8")
         with patch.object(sys, 'argv', ['reviewers.py', '-i', 'asdf']):
             with patch(get_reviewers) as mock_get_reviewers:
                 with patch('subprocess.Popen') as mock_popen:
-                    mock_popen().communicate.return_value = [phabricator_stdout, b'']
+                    mock_popen().communicate.return_value = [data, b'']
                     mock_get_reviewers.return_value = counter
                     reviewers.main()
         self.assertEqual(mock_print.call_args[0][0], 'qwer')
@@ -270,12 +270,12 @@ class TestMain(unittest.TestCase):
             'git_reviewers.reviewers.'
             'FindFileLogReviewers.get_reviewers'
         )
-        phabricator_output = {'response': {'data': [{'fields': {'roles': ['disabled']}}]}}
-        phabricator_stdout = json.dumps(phabricator_output).encode("utf-8")
+        data = {'response': {'data': [{'fields': {'roles': ['disabled']}}]}}
+        data = json.dumps(data).encode("utf-8")
         with patch.object(sys, 'argv', ['reviewers.py']):
             with patch(get_reviewers) as mock_get_reviewers:
                 with patch('subprocess.Popen') as mock_popen:
-                    mock_popen().communicate.return_value = [phabricator_stdout, b'']
+                    mock_popen().communicate.return_value = [data, b'']
                     mock_get_reviewers.return_value = counter
                     reviewers.main()
         self.assertEqual(mock_print.call_args[0][0], '')
