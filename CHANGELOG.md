@@ -1,6 +1,15 @@
 CHANGELOG.md
 ============
 
+v0.11.1 (2018-12-26)
+--------------------
+
+ - Make phabricator user activation check faster
+ - Add documentation in readme about configuration file
+ - Fix package description syntax
+ - Dependency updates
+
+
 v0.11.0 (2018-11-26)
 --------------------
 
