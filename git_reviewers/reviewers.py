@@ -49,26 +49,25 @@ class FindReviewers():
             stdin=subprocess.PIPE,
             stdout=subprocess.PIPE)
         process.stdin.write(request.encode("utf-8"))
+        return process
 
-        def parse_phabricator():
-            stdout, stderr = process.communicate()
-            output_str = stdout.decode("utf-8").strip()
-            phab_output = json.loads(output_str)
-            data = phab_output['response']['data']
-            if not data:
-                return True
-            roles = data[0]['fields']['roles']
-            if 'disabled' not in roles:
-                return username
-            else:
-                return None
-        return parse_phabricator
+    def parse_phabricator(self, username: str, process: subprocess.Popen) -> str:
+        stdout, stderr = process.communicate()
+        output_str = stdout.decode("utf-8").strip()
+        phab_output = json.loads(output_str)
+        data = phab_output['response']['data']
+        if not data:
+            return username
+        roles = data[0]['fields']['roles']
+        if 'disabled' in roles:
+            return None
+        return username
 
     def filter_phabricator_activated(self, usernames: List[str]) -> List[str]:
         username_processes = [
             self.check_phabricator_activated(x) for x in usernames
         ]
-        usernames = [x() for x in username_processes]
+        usernames = [self.parse_phabricator(*x) for x in zip(usernames, username_processes)]
         usernames = [x for x in usernames if x]
         return usernames
 
