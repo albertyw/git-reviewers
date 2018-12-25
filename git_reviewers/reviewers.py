@@ -7,7 +7,7 @@ import subprocess
 import sys
 
 import typing  # NOQA
-from typing import Callable, List, Tuple
+from typing import List, Tuple
 
 if sys.version_info < (3, 0): # NOQA pragma: no cover
     raise SystemError("Must be using Python 3")
@@ -40,7 +40,7 @@ class FindReviewers():
             return email[:email.find('@')]
         return email
 
-    def check_phabricator_activated(self, username: str) -> Callable[[], str]:
+    def check_phabricator_activated(self, username: str) -> subprocess.Popen:
         """ Check whether a phabricator user has been activated by """
         phab_command = ['arc', 'call-conduit', 'user.search']
         request = '{"constraints": {"usernames": ["%s"]}}' % username
@@ -52,7 +52,7 @@ class FindReviewers():
         return process
 
     def parse_phabricator(self, username, process):
-        # type: (str, subprocess.Popen) -> str:
+        # type: (str, subprocess.Popen) -> str
         stdout, stderr = process.communicate()
         output_str = stdout.decode("utf-8").strip()
         phab_output = json.loads(output_str)
@@ -61,7 +61,7 @@ class FindReviewers():
             return username
         roles = data[0]['fields']['roles']
         if 'disabled' in roles:
-            return None
+            return ''
         return username
 
     def filter_phabricator_activated(self, usernames: List[str]) -> List[str]:

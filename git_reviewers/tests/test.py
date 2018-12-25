@@ -7,6 +7,10 @@ import unittest
 from unittest.mock import patch, MagicMock
 
 from git_reviewers import reviewers
+from git_reviewers.tests.fixtures import \
+    PHAB_DEFAULT_DATA, \
+    PHAB_ACTIVATED_DATA, \
+    PHAB_DISABLED_DATA
 
 directory = os.path.dirname(os.path.realpath(__file__))
 BASE_DIRECTORY = os.path.normpath(os.path.join(directory, '..', '..'))
@@ -44,17 +48,13 @@ class TestFindReviewers(unittest.TestCase):
 
     @patch('subprocess.Popen')
     def test_check_phabricator_activated(self, mock_popen):
-        data = {'response': {'data': [{'fields': {'roles': ['activated']}}]}}
-        data = json.dumps(data).encode("utf-8")
-        mock_popen().communicate.return_value = [data, '']
+        mock_popen().communicate.return_value = [PHAB_ACTIVATED_DATA, '']
         activated = self.finder.check_phabricator_activated('asdf')
         self.assertTrue(activated)
 
     @patch('subprocess.Popen')
     def test_check_phabricator_activated_none(self, mock_popen):
-        data = {'response': {'data': []}}
-        data = json.dumps(data).encode("utf-8")
-        mock_popen().communicate.return_value = [data, '']
+        mock_popen().communicate.return_value = [PHAB_DEFAULT_DATA, '']
         activated = self.finder.check_phabricator_activated('asdf')
         self.assertTrue(activated)
 
@@ -184,12 +184,11 @@ class TestGetReviewers(unittest.TestCase):
             'git_reviewers.reviewers.'
             'FindFileLogReviewers.get_reviewers'
         )
-        data = {'response': {'data': [{'fields': {'roles': ['activated']}}]}}
-        data = json.dumps(data).encode("utf-8")
         with patch.object(sys, 'argv', ['reviewers.py', '--verbose']):
             with patch(get_reviewers) as mock_get_reviewers:
                 with patch('subprocess.Popen') as mock_popen:
-                    mock_popen().communicate.return_value = [data, b'']
+                    mock_popen().communicate.return_value = \
+                            [PHAB_ACTIVATED_DATA, b'']
                     mock_get_reviewers.return_value = counter
                     reviewers.get_reviewers('', True)
         self.assertEqual(len(mock_print.call_args), 2)
@@ -253,12 +252,11 @@ class TestMain(unittest.TestCase):
             'git_reviewers.reviewers.'
             'FindFileLogReviewers.get_reviewers'
         )
-        data = {'response': {'data': [{'fields': {'roles': ['activated']}}]}}
-        data = json.dumps(data).encode("utf-8")
         with patch.object(sys, 'argv', ['reviewers.py', '-i', 'asdf']):
             with patch(get_reviewers) as mock_get_reviewers:
                 with patch('subprocess.Popen') as mock_popen:
-                    mock_popen().communicate.return_value = [data, b'']
+                    mock_popen().communicate.return_value = \
+                        [PHAB_ACTIVATED_DATA, b'']
                     mock_get_reviewers.return_value = counter
                     reviewers.main()
         self.assertEqual(mock_print.call_args[0][0], 'qwer')
@@ -270,12 +268,11 @@ class TestMain(unittest.TestCase):
             'git_reviewers.reviewers.'
             'FindFileLogReviewers.get_reviewers'
         )
-        data = {'response': {'data': [{'fields': {'roles': ['disabled']}}]}}
-        data = json.dumps(data).encode("utf-8")
         with patch.object(sys, 'argv', ['reviewers.py']):
             with patch(get_reviewers) as mock_get_reviewers:
                 with patch('subprocess.Popen') as mock_popen:
-                    mock_popen().communicate.return_value = [data, b'']
+                    mock_popen().communicate.return_value = \
+                        [PHAB_DISABLED_DATA, b'']
                     mock_get_reviewers.return_value = counter
                     reviewers.main()
         self.assertEqual(mock_print.call_args[0][0], '')
