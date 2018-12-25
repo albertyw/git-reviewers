@@ -40,7 +40,7 @@ class FindReviewers():
             return email[:email.find('@')]
         return email
 
-    def check_phabricator_activated(self, username: str) -> bool:
+    def check_phabricator_activated(self, username: str) -> subprocess.Popen:
         """ Check whether a phabricator user has been activated by """
         phab_command = ['arc', 'call-conduit', 'user.search']
         request = '{"constraints": {"usernames": ["%s"]}}' % username
@@ -49,14 +49,28 @@ class FindReviewers():
             stdin=subprocess.PIPE,
             stdout=subprocess.PIPE)
         process.stdin.write(request.encode("utf-8"))
+        return process
+
+    def parse_phabricator(self, username, process):
+        # type: (str, subprocess.Popen) -> str
         stdout, stderr = process.communicate()
         output_str = stdout.decode("utf-8").strip()
         phab_output = json.loads(output_str)
         data = phab_output['response']['data']
         if not data:
-            return True
+            return username
         roles = data[0]['fields']['roles']
-        return 'disabled' not in roles
+        if 'disabled' in roles:
+            return ''
+        return username
+
+    def filter_phabricator_activated(self, usernames: List[str]) -> List[str]:
+        username_processes = [
+            (x, self.check_phabricator_activated(x)) for x in usernames
+        ]
+        usernames = [self.parse_phabricator(*x) for x in username_processes]
+        usernames = [x for x in usernames if x]
+        return usernames
 
 
 class FindFileLogReviewers(FindReviewers):
@@ -176,10 +190,8 @@ def get_reviewers(ignores, verbose):  # type: (List[str], bool) -> List[str]
     most_common = [x[0] for x in reviewers.most_common()]
     most_common = [x for x in most_common if x not in ignores]
     if phabricator:
-        most_common = [
-            x for x in most_common
-            if finder().check_phabricator_activated(x)
-        ]
+        most_common = FindArcCommitReviewers() \
+                .filter_phabricator_activated(most_common)
     reviewers_list = most_common[:REVIEWERS_LIMIT]
     return reviewers_list
 
