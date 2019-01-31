@@ -74,7 +74,7 @@ setup(
 
     entry_points={
         'console_scripts': [
-            'git_reviewers=git_reviewers.reviewers:main',
+            'git-reviewers=git_reviewers.reviewers:main',
         ],
     },
 )
