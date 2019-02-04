@@ -1,6 +1,16 @@
 CHANGELOG.md
 ============
 
+v0.12.0 (2019-02-03)
+--------------------
+
+ - Changed entrypoint from git_reviewers to git-reviewers
+ - Added support for reading the default config file of the current user
+ - Refactors to reading configs
+ - Backfilled some mypy type annotations
+ - Updated dependencies
+
+
 v0.11.1 (2018-12-26)
 --------------------
 
