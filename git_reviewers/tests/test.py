@@ -227,7 +227,7 @@ class TestConfig(unittest.TestCase):
         self.config_file.flush()
         self.config.read_configs(self.mock_args)
         self.assertTrue(self.config.verbose)
-        self.assertEqual(self.config.ignores, ['a', 'b', 'c', 'd'])
+        self.assertEqual(set(self.config.ignores), set(['a', 'b', 'c', 'd']))
 
 
 class TestMain(unittest.TestCase):

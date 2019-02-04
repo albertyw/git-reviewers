@@ -209,27 +209,34 @@ class Config():
         self.copy = False
 
     def read_configs(self, args):
-        # type: (argparse.Namespace) -> None
-        """ Parse configs by joining config file against argparse """
-        self.json = args.json
+        """ Read config data """
+        self.read_from_json(args.json)
+        self.read_from_args(args)
+
+    def read_from_json(self, args_json):
+        # type: (str) -> None
+        """ Read configs from the json config file """
+        self.json = args_json
         try:
             with open(self.json, 'r') as config_handle:
                 config_data = config_handle.read()
             config = json.loads(config_data)
         except FileNotFoundError:
-            config = {}
+            return
 
-        self.verbose = args.verbose
-        if self.verbose is None:
-            self.verbose = config.get('verbose', False)
+        self.verbose = config.get('verbose', self.verbose)
+        self.copy = config.get('copy', self.copy)
+        self.ignores += config.get('ignore', self.ignores)
 
-        self.copy = args.copy
-        if self.copy is None:
-            self.copy = config.get('copy', False)
-
-        self.ignores = args.ignore.split(',')
-        self.ignores += config.get('ignore', [])
-        self.ignores = [x for x in self.ignores if x]
+    def read_from_args(self, args):
+        # type: (argparse.Namespace) -> None
+        """ Parse configs by joining config file against argparse """
+        if args.verbose != Config.VERBOSE_DEFAULT:
+            self.verbose = args.verbose
+        if args.copy != Config.VERBOSE_DEFAULT:
+            self.copy = args.copy
+        if args.ignore != Config.IGNORES_DEFAULT:
+            self.ignores += args.ignore.split(',')
 
 
 def main() -> None:
