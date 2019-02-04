@@ -78,6 +78,9 @@ following fields (all fields optional):
         "ignore": ["a", "b", "c"]
     }
 
+``git-reviewers`` will also by default search for and load a json
+configuration file at ``~/.git/reviewers``.
+
 Development
 -----------
 
