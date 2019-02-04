@@ -199,8 +199,9 @@ class TestGetReviewers(unittest.TestCase):
         )
 
 
-class TestReadConfigs(unittest.TestCase):
+class TestConfig(unittest.TestCase):
     def setUp(self):
+        self.config = reviewers.Config()
         self.config_file = tempfile.NamedTemporaryFile('w')
         self.mock_args = MagicMock()
         self.mock_args.verbose = None
@@ -213,10 +214,10 @@ class TestReadConfigs(unittest.TestCase):
 
     def test_read_configs_args(self):
         self.mock_args.verbose = True
-        verbose, ignores, copy = reviewers.read_configs(self.mock_args)
-        self.assertTrue(verbose)
-        self.assertEqual(ignores, [])
-        self.assertFalse(copy)
+        self.config.read_configs(self.mock_args)
+        self.assertTrue(self.config.verbose)
+        self.assertEqual(self.config.ignores, [])
+        self.assertFalse(self.config.copy)
 
     def test_read_json(self):
         self.mock_args.ignore = 'a,b'
@@ -224,9 +225,9 @@ class TestReadConfigs(unittest.TestCase):
         config_file_data = {'verbose': True, 'ignore': ['c', 'd']}
         self.config_file.write(json.dumps(config_file_data))
         self.config_file.flush()
-        verbose, ignores, copy = reviewers.read_configs(self.mock_args)
-        self.assertTrue(verbose)
-        self.assertEqual(ignores, ['a', 'b', 'c', 'd'])
+        self.config.read_configs(self.mock_args)
+        self.assertTrue(self.config.verbose)
+        self.assertEqual(self.config.ignores, ['a', 'b', 'c', 'd'])
 
 
 class TestMain(unittest.TestCase):

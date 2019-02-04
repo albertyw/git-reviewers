@@ -208,30 +208,28 @@ class Config():
         self.json = ''
         self.copy = False
 
+    def read_configs(self, args):
+        # type: (argparse.Namespace) -> None
+        """ Parse configs by joining config file against argparse """
+        self.json = args.json
+        try:
+            with open(self.json, 'r') as config_handle:
+                config_data = config_handle.read()
+            config = json.loads(config_data)
+        except FileNotFoundError:
+            config = {}
 
-def read_configs(args):
-    # type: (argparse.Namespace) -> Tuple[bool, List[str], bool]
-    """ Parse configs by joining config file against argparse """
-    try:
-        with open(args.json, 'r') as config_handle:
-            config_data = config_handle.read()
-        config = json.loads(config_data)
-    except FileNotFoundError:
-        config = {}
+        self.verbose = args.verbose
+        if self.verbose is None:
+            self.verbose = config.get('verbose', False)
 
-    verbose = args.verbose
-    if verbose is None:
-        verbose = config.get('verbose', False)
+        self.copy = args.copy
+        if self.copy is None:
+            self.copy = config.get('copy', False)
 
-    copy = args.copy
-    if copy is None:
-        copy = config.get('copy', False)
-
-    ignores = args.ignore.split(',')
-    ignores += config.get('ignore', [])
-    ignores = [x for x in ignores if x]
-
-    return verbose, ignores, copy
+        self.ignores = args.ignore.split(',')
+        self.ignores += config.get('ignore', [])
+        self.ignores = [x for x in self.ignores if x]
 
 
 def main() -> None:
@@ -263,9 +261,10 @@ def main() -> None:
         help='Copy the list of reviewers to clipboard, if available',
     )
     args = parser.parse_args()
-    verbose, ignores, copy = read_configs(args)
-    reviewers_list = get_reviewers(ignores, verbose)
-    show_reviewers(reviewers_list, copy)
+    config = Config()
+    config.read_configs(args)
+    reviewers_list = get_reviewers(config.ignores, config.verbose)
+    show_reviewers(reviewers_list, config.copy)
 
 
 if __name__ == "__main__":
