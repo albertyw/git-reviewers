@@ -196,6 +196,19 @@ def get_reviewers(ignores, verbose):  # type: (List[str], bool) -> List[str]
     return reviewers_list
 
 
+class Config():
+    VERBOSE_DEFAULT = None
+    IGNORES_DEFAULT = ''
+    JSON_DEFAULT = ''
+    COPY_DEFAULT = None
+
+    def __init__(self):
+        self.verbose = False
+        self.ignores = []
+        self.json = ''
+        self.copy = False
+
+
 def read_configs(args):
     # type: (argparse.Namespace) -> Tuple[bool, List[str], bool]
     """ Parse configs by joining config file against argparse """
@@ -230,20 +243,23 @@ def main() -> None:
         '-v', '--version', action='version', version=__version__,
     )
     parser.add_argument(
-        '--verbose', default=None, action='store_true', help='verbose mode',
+        '--verbose',
+        default=Config.VERBOSE_DEFAULT, action='store_true',
+        help='verbose mode',
     )
     parser.add_argument(
         '-i', '--ignore',
-        default='', help='ignore a list of reviewers (comma separated)',
+        default=Config.IGNORES_DEFAULT,
+        help='ignore a list of reviewers (comma separated)',
     )
     parser.add_argument(
         '-j', '--json',
-        default='',
+        default=Config.JSON_DEFAULT,
         help='json file to read configs from, overridden by CLI flags',
     )
     parser.add_argument(
         '-c', '--copy',
-        default=None, action='store_true',
+        default=Config.COPY_DEFAULT, action='store_true',
         help='Copy the list of reviewers to clipboard, if available',
     )
     args = parser.parse_args()
