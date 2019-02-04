@@ -213,11 +213,16 @@ class Config():
 
     @staticmethod
     def default_global_json():
+        # type: () -> str
+        """
+        Return the path to the default config file for the current user
+        """
         home_dir = str(pathlib.Path.home())
         json_path = os.path.join(home_dir, Config.DEFAULT_GLOBAL_JSON)
         return json_path
 
     def read_configs(self, args):
+        # type: (argparse.Namespace) -> None
         """ Read config data """
         self.read_from_json(Config.default_global_json())
         self.read_from_json(args.json)

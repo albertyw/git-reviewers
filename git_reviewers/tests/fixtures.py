@@ -1,7 +1,8 @@
 import copy
 import json
+from typing import Dict, Any
 
-PHAB_DEFAULT = {
+PHAB_DEFAULT: Dict[str, Dict[str, Any]] = {
     'response': {
         'data': []
     }
