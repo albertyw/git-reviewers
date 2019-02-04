@@ -3,6 +3,8 @@
 import argparse
 from collections import Counter
 import json
+import os
+import pathlib
 import subprocess
 import sys
 
@@ -197,6 +199,7 @@ def get_reviewers(ignores, verbose):  # type: (List[str], bool) -> List[str]
 
 
 class Config():
+    DEFAULT_GLOBAL_JSON = ".git/reviewers"
     VERBOSE_DEFAULT = None
     IGNORES_DEFAULT = ''
     JSON_DEFAULT = ''
@@ -208,8 +211,15 @@ class Config():
         self.json = ''
         self.copy = False
 
+    @staticmethod
+    def default_global_json():
+        home_dir = str(pathlib.Path.home())
+        json_path = os.path.join(home_dir, Config.DEFAULT_GLOBAL_JSON)
+        return json_path
+
     def read_configs(self, args):
         """ Read config data """
+        self.read_from_json(Config.default_global_json())
         self.read_from_json(args.json)
         self.read_from_args(args)
 

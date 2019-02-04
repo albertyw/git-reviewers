@@ -212,6 +212,11 @@ class TestConfig(unittest.TestCase):
     def tearDown(self):
         self.config_file.close()
 
+    def test_default_global_json(self):
+        expected_path = os.path.expanduser("~") + "/.git/reviewers"
+        json_path = reviewers.Config.default_global_json()
+        self.assertEqual(json_path, expected_path)
+
     def test_read_configs_args(self):
         self.mock_args.verbose = True
         self.config.read_configs(self.mock_args)
