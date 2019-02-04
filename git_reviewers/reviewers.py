@@ -3,6 +3,8 @@
 import argparse
 from collections import Counter
 import json
+import os
+import pathlib
 import subprocess
 import sys
 
@@ -196,29 +198,57 @@ def get_reviewers(ignores, verbose):  # type: (List[str], bool) -> List[str]
     return reviewers_list
 
 
-def read_configs(args):
-    # type: (argparse.Namespace) -> Tuple[bool, List[str], bool]
-    """ Parse configs by joining config file against argparse """
-    try:
-        with open(args.json, 'r') as config_handle:
-            config_data = config_handle.read()
-        config = json.loads(config_data)
-    except FileNotFoundError:
-        config = {}
+class Config():
+    DEFAULT_GLOBAL_JSON = ".git/reviewers"
+    VERBOSE_DEFAULT = None
+    IGNORES_DEFAULT = ''
+    JSON_DEFAULT = ''
+    COPY_DEFAULT = None
 
-    verbose = args.verbose
-    if verbose is None:
-        verbose = config.get('verbose', False)
+    def __init__(self):
+        self.verbose = False
+        self.ignores = []
+        self.json = ''
+        self.copy = False
 
-    copy = args.copy
-    if copy is None:
-        copy = config.get('copy', False)
+    @staticmethod
+    def default_global_json():
+        home_dir = str(pathlib.Path.home())
+        json_path = os.path.join(home_dir, Config.DEFAULT_GLOBAL_JSON)
+        return json_path
 
-    ignores = args.ignore.split(',')
-    ignores += config.get('ignore', [])
-    ignores = [x for x in ignores if x]
+    def read_configs(self, args):
+        """ Read config data """
+        self.read_from_json(Config.default_global_json())
+        self.read_from_json(args.json)
+        self.read_from_args(args)
 
-    return verbose, ignores, copy
+    def read_from_json(self, args_json):
+        # type: (str) -> None
+        """ Read configs from the json config file """
+        self.json = args_json
+        try:
+            with open(self.json, 'r') as config_handle:
+                config_data = config_handle.read()
+            config = json.loads(config_data)
+        except (FileNotFoundError, json.decoder.JSONDecodeError):
+            return
+        if type(config) is not dict:
+            return
+
+        self.verbose = config.get('verbose', self.verbose)
+        self.copy = config.get('copy', self.copy)
+        self.ignores += config.get('ignore', self.ignores)
+
+    def read_from_args(self, args):
+        # type: (argparse.Namespace) -> None
+        """ Parse configs by joining config file against argparse """
+        if args.verbose != Config.VERBOSE_DEFAULT:
+            self.verbose = args.verbose
+        if args.copy != Config.VERBOSE_DEFAULT:
+            self.copy = args.copy
+        if args.ignore != Config.IGNORES_DEFAULT:
+            self.ignores += args.ignore.split(',')
 
 
 def main() -> None:
@@ -230,26 +260,30 @@ def main() -> None:
         '-v', '--version', action='version', version=__version__,
     )
     parser.add_argument(
-        '--verbose', default=None, action='store_true', help='verbose mode',
+        '--verbose',
+        default=Config.VERBOSE_DEFAULT, action='store_true',
+        help='verbose mode',
     )
     parser.add_argument(
         '-i', '--ignore',
-        default='', help='ignore a list of reviewers (comma separated)',
+        default=Config.IGNORES_DEFAULT,
+        help='ignore a list of reviewers (comma separated)',
     )
     parser.add_argument(
         '-j', '--json',
-        default='',
+        default=Config.JSON_DEFAULT,
         help='json file to read configs from, overridden by CLI flags',
     )
     parser.add_argument(
         '-c', '--copy',
-        default=None, action='store_true',
+        default=Config.COPY_DEFAULT, action='store_true',
         help='Copy the list of reviewers to clipboard, if available',
     )
     args = parser.parse_args()
-    verbose, ignores, copy = read_configs(args)
-    reviewers_list = get_reviewers(ignores, verbose)
-    show_reviewers(reviewers_list, copy)
+    config = Config()
+    config.read_configs(args)
+    reviewers_list = get_reviewers(config.ignores, config.verbose)
+    show_reviewers(reviewers_list, config.copy)
 
 
 if __name__ == "__main__":
