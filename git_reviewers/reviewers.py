@@ -231,7 +231,9 @@ class Config():
             with open(self.json, 'r') as config_handle:
                 config_data = config_handle.read()
             config = json.loads(config_data)
-        except FileNotFoundError:
+        except (FileNotFoundError, json.decoder.JSONDecodeError):
+            return
+        if type(config) is not dict:
             return
 
         self.verbose = config.get('verbose', self.verbose)

@@ -234,6 +234,22 @@ class TestConfig(unittest.TestCase):
         self.assertTrue(self.config.verbose)
         self.assertEqual(set(self.config.ignores), set(['a', 'b', 'c', 'd']))
 
+    def test_read_malformed_json(self):
+        self.mock_args.ignore = 'a,b'
+        self.mock_args.json = self.config_file.name
+        self.config_file.write('')
+        self.config_file.flush()
+        self.config.read_configs(self.mock_args)
+        self.assertEqual(set(self.config.ignores), set(['a', 'b']))
+
+    def test_read_unusable(self):
+        self.mock_args.ignore = 'a,b'
+        self.mock_args.json = self.config_file.name
+        self.config_file.write("[]")
+        self.config_file.flush()
+        self.config.read_configs(self.mock_args)
+        self.assertEqual(set(self.config.ignores), set(['a', 'b']))
+
 
 class TestMain(unittest.TestCase):
     @patch('builtins.print')
