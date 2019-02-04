@@ -224,6 +224,11 @@ class TestConfig(unittest.TestCase):
         self.assertEqual(self.config.ignores, [])
         self.assertFalse(self.config.copy)
 
+    def test_read_configs_copy(self):
+        self.mock_args.copy = True
+        self.config.read_configs(self.mock_args)
+        self.assertTrue(self.config.copy)
+
     def test_read_json(self):
         self.mock_args.ignore = 'a,b'
         self.mock_args.json = self.config_file.name
