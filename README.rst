@@ -37,15 +37,18 @@ Usage
 
 ::
 
-    Usage: reviewers.py [-h] [-v] [-i IGNORE] [-c]
+    usage: reviewers.py [-h] [-v] [--verbose] [-i IGNORE] [-j JSON] [-c]
 
     Suggest reviewers for your diff. https://github.com/albertyw/git-reviewers
 
     optional arguments:
       -h, --help            show this help message and exit
       -v, --version         show program's version number and exit
+      --verbose             verbose mode
       -i IGNORE, --ignore IGNORE
                             ignore a list of reviewers (comma separated)
+      -j JSON, --json JSON  json file to read configs from, overridden by CLI
+                            flags
       -c, --copy            Copy the list of reviewers to clipboard, if available
 
 Finders
