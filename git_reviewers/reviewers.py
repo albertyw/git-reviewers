@@ -66,12 +66,21 @@ class FindReviewers():
             return ''
         return username
 
-    def filter_phabricator_activated(self, usernames: List[str]) -> List[str]:
+    def filter_phabricator_activated(self, all_users: List[str]) -> List[str]:
+        limited_users = all_users[:REVIEWERS_LIMIT]
         username_processes = [
-            (x, self.check_phabricator_activated(x)) for x in usernames
+            (x, self.check_phabricator_activated(x)) for x in limited_users
         ]
         usernames = [self.parse_phabricator(*x) for x in username_processes]
         usernames = [x for x in usernames if x]
+        if len(usernames) < REVIEWERS_LIMIT:
+            for username in all_users[REVIEWERS_LIMIT:]:
+                check_proc = self.check_phabricator_activated(username)
+                username = self.parse_phabricator(username, check_proc)
+                if username:
+                    usernames.append(username)
+                    if len(usernames) >= REVIEWERS_LIMIT:
+                        break
         return usernames
 
 

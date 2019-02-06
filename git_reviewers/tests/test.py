@@ -19,6 +19,10 @@ BASE_DIRECTORY = os.path.normpath(os.path.join(directory, '..', '..'))
 class TestFindReviewers(unittest.TestCase):
     def setUp(self):
         self.finder = reviewers.FindReviewers()
+        self.orig_reviewers_limit = reviewers.REVIEWERS_LIMIT
+
+    def tearDown(self):
+        reviewers.REVIEWERS_LIMIT = self.orig_reviewers_limit
 
     def test_get_reviewers(self):
         with self.assertRaises(NotImplementedError):
@@ -57,6 +61,32 @@ class TestFindReviewers(unittest.TestCase):
         mock_popen().communicate.return_value = [PHAB_DEFAULT_DATA, '']
         activated = self.finder.check_phabricator_activated('asdf')
         self.assertTrue(activated)
+
+    def test_filter_phabricator_activated(self):
+        users = ['a', 'b', 'c', 'd']
+        reviewers.REVIEWERS_LIMIT = 2
+        self.mock_check_count = 0
+
+        def mock_check(u):
+            self.assertEqual(u, users[self.mock_check_count])
+            self.mock_check_count += 1
+            return self.mock_check_count - 1
+        self.mock_parse_count = 0
+
+        def mock_parse(u, p):
+            self.assertEqual(u, users[self.mock_parse_count])
+            self.assertEqual(p, self.mock_parse_count)
+            parse_return = ''
+            if self.mock_parse_count in [0, 2]:
+                parse_return = u
+            self.mock_parse_count += 1
+            return parse_return
+        self.finder.check_phabricator_activated = mock_check
+        self.finder.parse_phabricator = mock_parse
+        filtered_usernames = self.finder.filter_phabricator_activated(users)
+        self.assertEqual(self.mock_check_count, 3)
+        self.assertEqual(self.mock_parse_count, 3)
+        self.assertEqual(filtered_usernames, ['a', 'c'])
 
 
 class TestFindLogReviewers(unittest.TestCase):
