@@ -66,11 +66,13 @@ class TestFindReviewers(unittest.TestCase):
         users = ['a', 'b', 'c', 'd']
         reviewers.REVIEWERS_LIMIT = 2
         self.mock_check_count = 0
+
         def mock_check(u):
             self.assertEqual(u, users[self.mock_check_count])
             self.mock_check_count += 1
             return self.mock_check_count - 1
         self.mock_parse_count = 0
+
         def mock_parse(u, p):
             self.assertEqual(u, users[self.mock_parse_count])
             self.assertEqual(p, self.mock_parse_count)
