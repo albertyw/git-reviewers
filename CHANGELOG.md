@@ -1,6 +1,15 @@
 CHANGELOG.md
 ============
 
+v0.12.1 (2019-02-05)
+--------------------
+
+ - Fixed a bug where too many usernames would cause arc to lock up querying phabricator
+ - Updated README
+ - Removed support for python 3.4 and 3.5
+ - Dependency updates
+
+
 v0.12.0 (2019-02-03)
 --------------------
 
