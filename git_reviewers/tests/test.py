@@ -3,6 +3,7 @@ import os
 import json
 import sys
 import tempfile
+import typing
 import unittest
 from unittest.mock import patch, MagicMock
 
@@ -148,7 +149,8 @@ class TestHistoricalReviewers(unittest.TestCase):
 
     def test_get_reviewers(self):
         counter = Counter()  # type: typing.Counter[str]
-        self.finder.get_log_reviewers_from_file = MagicMock(return_value=counter)
+        mock_get_log_reviewers = MagicMock(return_value=counter)
+        self.finder.get_log_reviewers_from_file = mock_get_log_reviewers
         reviewers = self.finder.get_reviewers()
         self.assertEqual(counter, reviewers)
 

@@ -181,7 +181,11 @@ def show_reviewers(reviewer_list, copy_clipboard):
 def get_reviewers(ignores, verbose):  # type: (List[str], bool) -> List[str]
     """ Main function to get reviewers for a repository """
     phabricator = False
-    finders = [FindLogReviewers, FindHistoricalReviewers, FindArcCommitReviewers]
+    finders = [
+        FindLogReviewers,
+        FindHistoricalReviewers,
+        FindArcCommitReviewers
+    ]
     reviewers = Counter()  # type: typing.Counter[str]
     for finder in finders:
         finder_reviewers = finder().get_reviewers()
