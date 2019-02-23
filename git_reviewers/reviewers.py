@@ -97,7 +97,9 @@ class FindFileLogReviewers(FindReviewers):
     def get_log_reviewers_from_file(self, file_path):
         # type: (str) -> typing.Counter[str]
         """ Find the reviewers based on the git log for a file """
-        git_shortlog_command = ['git', 'shortlog', '-sne', '--', file_path]
+        git_shortlog_command = ['git', 'shortlog', '-sne']
+        if file_path:
+            git_shortlog_command += ['--', file_path]
         git_shortlog = self.run_command(git_shortlog_command)
         users = dict(
             self.extract_username_from_shortlog(shortlog)
@@ -128,19 +130,13 @@ class FindLogReviewers(FindFileLogReviewers):
         """ Find the changed files between current status and master """
         git_diff_files_command = ['git', 'diff', 'master', '--name-only']
         git_diff_files = self.run_command(git_diff_files_command)
-        if not git_diff_files:
-            return FindHistoricalReviewers().get_changed_files()
         return git_diff_files
 
 
 class FindHistoricalReviewers(FindFileLogReviewers):
-    def get_changed_files(self) -> List[str]:
-        """Find all git files """
-        git_diff_files_command = [
-            'git', 'ls-tree', '-r', 'master', '--name-only'
-        ]
-        git_diff_files = self.run_command(git_diff_files_command)
-        return git_diff_files
+    def get_reviewers(self) -> typing.Counter[str]:
+        reviewers = self.get_log_reviewers_from_file('')
+        return reviewers
 
 
 class FindArcCommitReviewers(FindLogReviewers):
@@ -185,7 +181,7 @@ def show_reviewers(reviewer_list, copy_clipboard):
 def get_reviewers(ignores, verbose):  # type: (List[str], bool) -> List[str]
     """ Main function to get reviewers for a repository """
     phabricator = False
-    finders = [FindLogReviewers, FindArcCommitReviewers]
+    finders = [FindLogReviewers, FindHistoricalReviewers, FindArcCommitReviewers]
     reviewers = Counter()  # type: typing.Counter[str]
     for finder in finders:
         finder_reviewers = finder().get_reviewers()
