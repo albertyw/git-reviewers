@@ -3,6 +3,7 @@ import os
 import json
 import sys
 import tempfile
+import typing
 import unittest
 from unittest.mock import patch, MagicMock
 
@@ -141,26 +142,17 @@ class TestLogReviewers(unittest.TestCase):
         files = self.finder.get_changed_files()
         self.assertEqual(files, ['README.rst', 'setup.py'])
 
-    @patch('git_reviewers.reviewers.FindHistoricalReviewers')
-    @patch('subprocess.run')
-    def test_no_diffs(self, mock_run, mock_historical):
-        process = MagicMock()
-        process.stdout = b''
-        mock_run.return_value = process
-        mock_historical().get_changed_files.return_value = ['asdf']
-        files = self.finder.get_changed_files()
-        self.assertEqual(files, ['asdf'])
-
 
 class TestHistoricalReviewers(unittest.TestCase):
     def setUp(self):
         self.finder = reviewers.FindHistoricalReviewers()
 
-    def test_get_changed_files(self):
-        changed_files = ['README.rst', 'setup.py']
-        self.finder.run_command = MagicMock(return_value=changed_files)
-        files = self.finder.get_changed_files()
-        self.assertEqual(files, ['README.rst', 'setup.py'])
+    def test_get_reviewers(self):
+        counter = Counter()  # type: typing.Counter[str]
+        mock_get_log_reviewers = MagicMock(return_value=counter)
+        self.finder.get_log_reviewers_from_file = mock_get_log_reviewers
+        reviewers = self.finder.get_reviewers()
+        self.assertEqual(counter, reviewers)
 
 
 class TestFindArcCommitReviewers(unittest.TestCase):
@@ -214,13 +206,16 @@ class TestGetReviewers(unittest.TestCase):
             'git_reviewers.reviewers.'
             'FindFileLogReviewers.get_reviewers'
         )
+        run_command = 'git_reviewers.reviewers.FindReviewers.run_command'
         with patch.object(sys, 'argv', ['reviewers.py', '--verbose']):
             with patch(get_reviewers) as mock_get_reviewers:
-                with patch('subprocess.Popen') as mock_popen:
-                    mock_popen().communicate.return_value = \
-                            [PHAB_ACTIVATED_DATA, b'']
-                    mock_get_reviewers.return_value = counter
-                    reviewers.get_reviewers('', True)
+                with patch(run_command) as mock_run_command:
+                    with patch('subprocess.Popen') as mock_popen:
+                        mock_popen().communicate.return_value = \
+                                [PHAB_ACTIVATED_DATA, b'']
+                        mock_run_command.return_value = []
+                        mock_get_reviewers.return_value = counter
+                        reviewers.get_reviewers('', True)
         self.assertEqual(len(mock_print.call_args), 2)
         self.assertEqual(
             mock_print.call_args[0][0],
@@ -309,13 +304,16 @@ class TestMain(unittest.TestCase):
             'git_reviewers.reviewers.'
             'FindFileLogReviewers.get_reviewers'
         )
+        run_command = 'git_reviewers.reviewers.FindReviewers.run_command'
         with patch.object(sys, 'argv', ['reviewers.py', '-i', 'asdf']):
             with patch(get_reviewers) as mock_get_reviewers:
-                with patch('subprocess.Popen') as mock_popen:
-                    mock_popen().communicate.return_value = \
-                        [PHAB_ACTIVATED_DATA, b'']
-                    mock_get_reviewers.return_value = counter
-                    reviewers.main()
+                with patch(run_command) as mock_run_command:
+                    with patch('subprocess.Popen') as mock_popen:
+                        mock_popen().communicate.return_value = \
+                            [PHAB_ACTIVATED_DATA, b'']
+                        mock_run_command.return_value = []
+                        mock_get_reviewers.return_value = counter
+                        reviewers.main()
         self.assertEqual(mock_print.call_args[0][0], 'qwer')
 
     @patch('builtins.print')
@@ -325,11 +323,14 @@ class TestMain(unittest.TestCase):
             'git_reviewers.reviewers.'
             'FindFileLogReviewers.get_reviewers'
         )
+        run_command = 'git_reviewers.reviewers.FindReviewers.run_command'
         with patch.object(sys, 'argv', ['reviewers.py']):
             with patch(get_reviewers) as mock_get_reviewers:
-                with patch('subprocess.Popen') as mock_popen:
-                    mock_popen().communicate.return_value = \
-                        [PHAB_DISABLED_DATA, b'']
-                    mock_get_reviewers.return_value = counter
-                    reviewers.main()
+                with patch(run_command) as mock_run_command:
+                    with patch('subprocess.Popen') as mock_popen:
+                        mock_popen().communicate.return_value = \
+                            [PHAB_DISABLED_DATA, b'']
+                        mock_run_command.return_value = []
+                        mock_get_reviewers.return_value = counter
+                        reviewers.main()
         self.assertEqual(mock_print.call_args[0][0], '')
