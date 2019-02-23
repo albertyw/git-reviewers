@@ -1,6 +1,13 @@
 CHANGELOG.md
 ============
 
+v0.12.2 (2019-02-22)
+--------------------
+
+ - Optimizes FindHistoricalReviewers to look over the entire repository at once
+   (Fixes https://github.com/albertyw/git-reviewers/issues/40)
+
+
 v0.12.1 (2019-02-05)
 --------------------
 
