@@ -134,7 +134,7 @@ class FindLogReviewers(FindFileLogReviewers):
 
 
 class FindHistoricalReviewers(FindFileLogReviewers):
-    def get_reviewers(self) -> typing.Counter[str]:
+    def get_reviewers(self):  # type: () -> typing.Counter[str]
         reviewers = self.get_log_reviewers_from_file('')
         return reviewers
 
