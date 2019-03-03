@@ -162,19 +162,19 @@ class TestFindArcCommitReviewers(unittest.TestCase):
     def test_no_reviewers(self):
         log = ['asdf']
         self.finder.run_command = MagicMock(return_value=log)
-        reviewers = self.finder.get_log_reviewers_from_file('file')
+        reviewers = self.finder.get_log_reviewers_from_file(['file'])
         self.assertEqual(reviewers, Counter())
 
     def test_reviewers(self):
         log = ['asdf', ' Reviewed By: asdf, qwer']
         self.finder.run_command = MagicMock(return_value=log)
-        reviewers = self.finder.get_log_reviewers_from_file('file')
+        reviewers = self.finder.get_log_reviewers_from_file(['file'])
         self.assertEqual(reviewers, Counter({'asdf': 1, 'qwer': 1}))
 
     def test_multiple_reviews(self):
         log = ['asdf', ' Reviewed By: asdf, qwer', 'Reviewed By: asdf']
         self.finder.run_command = MagicMock(return_value=log)
-        reviewers = self.finder.get_log_reviewers_from_file('file')
+        reviewers = self.finder.get_log_reviewers_from_file(['file'])
         self.assertEqual(reviewers, Counter({'asdf': 2, 'qwer': 1}))
 
 

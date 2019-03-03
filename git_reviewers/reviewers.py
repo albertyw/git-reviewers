@@ -94,12 +94,12 @@ class FindFileLogReviewers(FindReviewers):
         count = int(shortlog.split("\t")[0])
         return username, count
 
-    def get_log_reviewers_from_file(self, file_path):
-        # type: (str) -> typing.Counter[str]
+    def get_log_reviewers_from_file(self, file_paths):
+        # type: (List[str]) -> typing.Counter[str]
         """ Find the reviewers based on the git log for a file """
         git_shortlog_command = ['git', 'shortlog', '-sne']
-        if file_path:
-            git_shortlog_command += ['--', file_path]
+        if file_paths:
+            git_shortlog_command += ['--'] + file_paths
         git_shortlog = self.run_command(git_shortlog_command)
         users = dict(
             self.extract_username_from_shortlog(shortlog)
@@ -118,10 +118,7 @@ class FindFileLogReviewers(FindReviewers):
     def get_reviewers(self):  # type: () -> typing.Counter[str]
         """ Find the reviewers based on the git log of the diffed files """
         changed_files = self.get_changed_files()
-        reviewers = Counter()  # type: typing.Counter[str]
-        for changed in changed_files:
-            users = self.get_log_reviewers_from_file(changed)
-            reviewers.update(users)
+        reviewers = self.get_log_reviewers_from_file(changed_files)
         return reviewers
 
 
@@ -135,7 +132,7 @@ class FindLogReviewers(FindFileLogReviewers):
 
 class FindHistoricalReviewers(FindFileLogReviewers):
     def get_reviewers(self):  # type: () -> typing.Counter[str]
-        reviewers = self.get_log_reviewers_from_file('')
+        reviewers = self.get_log_reviewers_from_file([])
         return reviewers
 
 
@@ -144,9 +141,9 @@ class FindArcCommitReviewers(FindLogReviewers):
     Get reviewers based on arc commit messages, which list which users
     have approved past diffs
     """
-    def get_log_reviewers_from_file(self, file_path):
-        # type: (str) -> typing.Counter[str]
-        git_commit_messages_command = ['git', 'log', '--all', '--', file_path]
+    def get_log_reviewers_from_file(self, file_paths):
+        # type: (List[str]) -> typing.Counter[str]
+        git_commit_messages_command = ['git', 'log', '--all', '--'] + file_paths
         git_commit_messages = self.run_command(git_commit_messages_command)
         reviewers_identifier = 'Reviewed By: '
         reviewers = Counter()  # type: typing.Counter[str]
