@@ -143,8 +143,8 @@ class FindArcCommitReviewers(FindLogReviewers):
     """
     def get_log_reviewers_from_file(self, file_paths):
         # type: (List[str]) -> typing.Counter[str]
-        git_commit_messages_command = ['git', 'log', '--all', '--'] + file_paths
-        git_commit_messages = self.run_command(git_commit_messages_command)
+        command = ['git', 'log', '--all', '--'] + file_paths
+        git_commit_messages = self.run_command(command)
         reviewers_identifier = 'Reviewed By: '
         reviewers = Counter()  # type: typing.Counter[str]
         for line in git_commit_messages:
