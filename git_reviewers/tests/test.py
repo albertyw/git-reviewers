@@ -19,7 +19,7 @@ BASE_DIRECTORY = os.path.normpath(os.path.join(directory, '..', '..'))
 
 class TestFindReviewers(unittest.TestCase):
     def setUp(self):
-        self.finder = reviewers.FindReviewers()
+        self.finder = reviewers.FindReviewers(reviewers.Config())
         self.orig_reviewers_limit = reviewers.REVIEWERS_LIMIT
 
     def tearDown(self):
@@ -92,7 +92,7 @@ class TestFindReviewers(unittest.TestCase):
 
 class TestFindLogReviewers(unittest.TestCase):
     def setUp(self):
-        self.finder = reviewers.FindFileLogReviewers()
+        self.finder = reviewers.FindFileLogReviewers(reviewers.Config())
 
     def check_extract_username_from_shortlog(self, shortlog, email, weight):
         user_data = self.finder.extract_username_from_shortlog(shortlog)
@@ -134,7 +134,7 @@ class TestFindLogReviewers(unittest.TestCase):
 
 class TestLogReviewers(unittest.TestCase):
     def setUp(self):
-        self.finder = reviewers.FindLogReviewers()
+        self.finder = reviewers.FindLogReviewers(reviewers.Config())
 
     def test_get_changed_files(self):
         changed_files = ['README.rst', 'setup.py']
@@ -145,7 +145,7 @@ class TestLogReviewers(unittest.TestCase):
 
 class TestHistoricalReviewers(unittest.TestCase):
     def setUp(self):
-        self.finder = reviewers.FindHistoricalReviewers()
+        self.finder = reviewers.FindHistoricalReviewers(reviewers.Config())
 
     def test_get_reviewers(self):
         counter = Counter()  # type: typing.Counter[str]
@@ -157,7 +157,7 @@ class TestHistoricalReviewers(unittest.TestCase):
 
 class TestFindArcCommitReviewers(unittest.TestCase):
     def setUp(self):
-        self.finder = reviewers.FindArcCommitReviewers()
+        self.finder = reviewers.FindArcCommitReviewers(reviewers.Config())
 
     def test_no_reviewers(self):
         log = ['asdf']
@@ -201,6 +201,8 @@ class TestShowReviewers(unittest.TestCase):
 class TestGetReviewers(unittest.TestCase):
     @patch('builtins.print')
     def test_verbose_reviewers(self, mock_print):
+        config = reviewers.Config()
+        config.verbose = True
         counter = Counter({'asdf': 1, 'qwer': 1})
         get_reviewers = (
             'git_reviewers.reviewers.'
@@ -215,7 +217,7 @@ class TestGetReviewers(unittest.TestCase):
                                 [PHAB_ACTIVATED_DATA, b'']
                         mock_run_command.return_value = []
                         mock_get_reviewers.return_value = counter
-                        reviewers.get_reviewers('', True)
+                        reviewers.get_reviewers(config)
         self.assertEqual(len(mock_print.call_args), 2)
         self.assertEqual(
             mock_print.call_args[0][0],

@@ -20,6 +20,9 @@ REVIEWERS_LIMIT = 7
 
 
 class FindReviewers():
+    def __init__(self, config):  # type: (Config) -> None
+        self.config = config
+
     def get_reviewers(self):  # type: () -> typing.Counter[str]
         """
         All review classes should implement this and return a list of strings
@@ -125,7 +128,7 @@ class FindFileLogReviewers(FindReviewers):
 class FindLogReviewers(FindFileLogReviewers):
     def get_changed_files(self) -> List[str]:
         """ Find the changed files between current status and master """
-        git_diff_files_command = ['git', 'diff', 'master', '--name-only']
+        git_diff_files_command = ['git', 'diff', self.config.base_branch, '--name-only']
         git_diff_files = self.run_command(git_diff_files_command)
         return git_diff_files
 
@@ -175,7 +178,7 @@ def show_reviewers(reviewer_list, copy_clipboard):
         pass
 
 
-def get_reviewers(ignores, verbose):  # type: (List[str], bool) -> List[str]
+def get_reviewers(config):  # type: (List[str], bool) -> List[str]
     """ Main function to get reviewers for a repository """
     phabricator = False
     finders = [
@@ -185,8 +188,8 @@ def get_reviewers(ignores, verbose):  # type: (List[str], bool) -> List[str]
     ]
     reviewers = Counter()  # type: typing.Counter[str]
     for finder in finders:
-        finder_reviewers = finder().get_reviewers()
-        if verbose:
+        finder_reviewers = finder(config).get_reviewers()
+        if config.verbose:
             print(
                 "Reviewers from %s: %s" %
                 (finder.__name__, dict(finder_reviewers))
@@ -196,9 +199,9 @@ def get_reviewers(ignores, verbose):  # type: (List[str], bool) -> List[str]
             phabricator = True
 
     most_common = [x[0] for x in reviewers.most_common()]
-    most_common = [x for x in most_common if x not in ignores]
+    most_common = [x for x in most_common if x not in config.ignores]
     if phabricator:
-        most_common = FindArcCommitReviewers() \
+        most_common = FindArcCommitReviewers(config) \
                 .filter_phabricator_activated(most_common)
     reviewers_list = most_common[:REVIEWERS_LIMIT]
     return reviewers_list
@@ -210,12 +213,14 @@ class Config():
     IGNORES_DEFAULT = ''
     JSON_DEFAULT = ''
     COPY_DEFAULT = None
+    BASE_BRANCH_DEFAULT = 'master'
 
     def __init__(self):
         self.verbose = False
         self.ignores = []
         self.json = ''
         self.copy = False
+        self.base_branch = 'master'
 
     @staticmethod
     def default_global_json():
@@ -250,6 +255,7 @@ class Config():
         self.verbose = config.get('verbose', self.verbose)
         self.copy = config.get('copy', self.copy)
         self.ignores += config.get('ignore', self.ignores)
+        self.base_branch = config.get('base_branch', self.base_branch)
 
     def read_from_args(self, args):
         # type: (argparse.Namespace) -> None
@@ -260,6 +266,8 @@ class Config():
             self.copy = args.copy
         if args.ignore != Config.IGNORES_DEFAULT:
             self.ignores += args.ignore.split(',')
+        if args.base_branch != Config.BASE_BRANCH_DEFAULT:
+            self.base_branch = args.base_branch
 
 
 def main() -> None:
@@ -290,10 +298,15 @@ def main() -> None:
         default=Config.COPY_DEFAULT, action='store_true',
         help='Copy the list of reviewers to clipboard, if available',
     )
+    parser.add_argument(
+        '-b', '--base-branch',
+        default=Config.BASE_BRANCH_DEFAULT,
+        help='Compare against a base branch (default: master)',
+    )
     args = parser.parse_args()
     config = Config()
     config.read_configs(args)
-    reviewers_list = get_reviewers(config.ignores, config.verbose)
+    reviewers_list = get_reviewers(config)
     show_reviewers(reviewers_list, config.copy)
 
 
