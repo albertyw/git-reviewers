@@ -50,7 +50,8 @@ Usage
       -j JSON, --json JSON  json file to read configs from, overridden by CLI
                             flags
       -c, --copy            Copy the list of reviewers to clipboard, if available
-
+      -b BASE_BRANCH, --base-branch BASE_BRANCH
+                            Compare against a base branch (default: master)
 Finders
 -------
 
@@ -75,7 +76,8 @@ following fields (all fields optional):
     {
         "verbose": False,
         "copy": False,
-        "ignore": ["a", "b", "c"]
+        "ignore": ["a", "b", "c"],
+        "branch": "master"
     }
 
 ``git-reviewers`` will also by default search for and load a json
