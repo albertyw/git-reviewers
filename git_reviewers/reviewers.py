@@ -128,7 +128,8 @@ class FindFileLogReviewers(FindReviewers):
 class FindLogReviewers(FindFileLogReviewers):
     def get_changed_files(self) -> List[str]:
         """ Find the changed files between current status and master """
-        git_diff_files_command = ['git', 'diff', self.config.base_branch, '--name-only']
+        branch = self.config.base_branch
+        git_diff_files_command = ['git', 'diff', branch, '--name-only']
         git_diff_files = self.run_command(git_diff_files_command)
         return git_diff_files
 
