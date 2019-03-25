@@ -1,6 +1,14 @@
 CHANGELOG.md
 ============
 
+v0.13.0 (2019-03-25)
+--------------------
+
+ - Add ability to configure base branch with `-b`
+ - Optimizes git shortlog to be faster
+ - Dependency updates
+
+
 v0.12.2 (2019-02-22)
 --------------------
 
