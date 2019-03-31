@@ -179,7 +179,7 @@ def show_reviewers(reviewer_list, copy_clipboard):
         pass
 
 
-def get_reviewers(config):  # type: (List[str], bool) -> List[str]
+def get_reviewers(config):  # type: (Config) -> List[str]
     """ Main function to get reviewers for a repository """
     phabricator = False
     finders = [
