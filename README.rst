@@ -77,7 +77,7 @@ following fields (all fields optional):
         "verbose": false,
         "copy": false,
         "ignore": ["a", "b", "c"],
-        "branch": "master"
+        "base_branch": "master"
     }
 
 ``git-reviewers`` will also by default search for and load a json
