@@ -74,8 +74,8 @@ following fields (all fields optional):
 .. code:: json
 
     {
-        "verbose": False,
-        "copy": False,
+        "verbose": false,
+        "copy": false,
         "ignore": ["a", "b", "c"],
         "branch": "master"
     }
