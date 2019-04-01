@@ -59,10 +59,12 @@ Finders
 reviewers, or Finders.  They return a weighted set of reviewers which is then
 sorted and recommended to you.  They include:
 
- - ``FindLogReviewers`` - Generate a list of reviewers based on committers to
-   your committed (but not merged with master) files
- - ``FindArcCommitReviewers`` - Generate reviewers based on arc commit messages
-   for files which you have modified on your branch
+- ``FindLogReviewers`` - Generate a list of reviewers based on committers to
+  your committed (but not merged with master) files
+- ``FindHistoricalReviewers`` - Generate reviewers based on the repository
+  committers as a whole
+- ``FindArcCommitReviewers`` - Generate reviewers based on arc commit messages
+  for files which you have modified on your branch
 
 Configuration
 -------------
