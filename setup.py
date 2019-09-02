@@ -56,6 +56,7 @@ setup(
 
     py_modules=["git_reviewers.reviewers"],
 
+    python_requires='>=3.5',
     install_requires=[],
 
     test_suite="git_reviewers.tests",
