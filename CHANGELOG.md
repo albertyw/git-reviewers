@@ -1,6 +1,13 @@
 CHANGELOG.md
 ============
 
+v0.13.2 (2019-09-04)
+--------------------
+
+ - Convert README to markdown
+ - Fix validation of package `long_description`
+
+
 v0.13.1 (2019-09-04)
 --------------------
 
