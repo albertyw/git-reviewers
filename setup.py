@@ -8,7 +8,7 @@ from setuptools import find_packages, setup
 from git_reviewers import reviewers
 
 here = os.path.abspath(os.path.dirname(__file__))
-with open(os.path.join(here, 'README.rst'), encoding='utf-8') as f:
+with open(os.path.join(here, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
 # Package meta-data.
@@ -25,6 +25,7 @@ setup(
     version=reviewers.__version__,
     description=DESCRIPTION,
     long_description=long_description,
+    long_description_content_type='text/markdown',
     author=AUTHOR,
     author_email=EMAIL,
     url=URL,
