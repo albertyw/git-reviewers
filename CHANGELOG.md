@@ -1,6 +1,14 @@
 CHANGELOG.md
 ============
 
+v0.13.1 (2019-09-04)
+--------------------
+
+ - Cleanup and minor fixes
+ - Readme updates
+ - Update dependencies
+
+
 v0.13.0 (2019-03-25)
 --------------------
 
