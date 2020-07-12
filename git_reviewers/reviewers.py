@@ -53,7 +53,7 @@ class FindReviewers():
             phab_command,
             stdin=subprocess.PIPE,
             stdout=subprocess.PIPE)
-        process.stdin.write(request.encode("utf-8"))
+        process.communicate(input=request.encode("utf-8"))
         return process
 
     def parse_phabricator(self, username, process):
