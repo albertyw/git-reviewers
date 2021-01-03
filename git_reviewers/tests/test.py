@@ -215,7 +215,7 @@ class TestGetReviewers(unittest.TestCase):
                     with patch('subprocess.Popen') as mock_popen:
                         mock_popen().returncode = 0
                         mock_popen().communicate.return_value = \
-                                [PHAB_ACTIVATED_DATA, b'']
+                            [PHAB_ACTIVATED_DATA, b'']
                         mock_run_command.return_value = []
                         mock_get_reviewers.return_value = counter
                         reviewers.get_reviewers(config)
