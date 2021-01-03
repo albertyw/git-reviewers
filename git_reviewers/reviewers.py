@@ -59,6 +59,10 @@ class FindReviewers():
     def parse_phabricator(self, username, process):
         # type: (str, subprocess.Popen) -> str
         stdout, stderr = process.communicate()
+        if process.returncode != 0:
+            print("stdout: %s" % stdout)
+            print("stderr: %s" % stderr)
+            raise RuntimeError("Arc not able to call conduit")
         output_str = stdout.decode("utf-8").strip()
         phab_output = json.loads(output_str)
         data = phab_output['response']['data']

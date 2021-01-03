@@ -213,6 +213,7 @@ class TestGetReviewers(unittest.TestCase):
             with patch(get_reviewers) as mock_get_reviewers:
                 with patch(run_command) as mock_run_command:
                     with patch('subprocess.Popen') as mock_popen:
+                        mock_popen().returncode = 0
                         mock_popen().communicate.return_value = \
                                 [PHAB_ACTIVATED_DATA, b'']
                         mock_run_command.return_value = []
@@ -311,6 +312,7 @@ class TestMain(unittest.TestCase):
             with patch(get_reviewers) as mock_get_reviewers:
                 with patch(run_command) as mock_run_command:
                     with patch('subprocess.Popen') as mock_popen:
+                        mock_popen().returncode = 0
                         mock_popen().communicate.return_value = \
                             [PHAB_ACTIVATED_DATA, b'']
                         mock_run_command.return_value = []
@@ -330,6 +332,7 @@ class TestMain(unittest.TestCase):
             with patch(get_reviewers) as mock_get_reviewers:
                 with patch(run_command) as mock_run_command:
                     with patch('subprocess.Popen') as mock_popen:
+                        mock_popen().returncode = 0
                         mock_popen().communicate.return_value = \
                             [PHAB_DISABLED_DATA, b'']
                         mock_run_command.return_value = []
