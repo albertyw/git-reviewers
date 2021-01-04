@@ -1,6 +1,15 @@
 CHANGELOG.md
 ============
 
+v0.13.3 (2020-01-03)
+--------------------
+
+ - Catch arcanist errors
+ - Export python typing from package
+ - Update dependencies
+ - Officially support python 3.9
+
+
 v0.13.2 (2019-09-04)
 --------------------
 
