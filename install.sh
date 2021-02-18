@@ -20,4 +20,4 @@ fi
 
 git config --global \
     alias.reviewers \
-    "!"$BROWSE_PY_LOCATION"/reviewers.py"
+    "!$BROWSE_PY_LOCATION/reviewers.py"
