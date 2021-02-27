@@ -58,7 +58,9 @@ class TestFindReviewers(unittest.TestCase):
         self.assertTrue(activated)
 
     @patch('subprocess.Popen')
-    def test_check_phabricator_activated_none(self, mock_popen: MagicMock) -> None:
+    def test_check_phabricator_activated_none(
+        self, mock_popen: MagicMock
+    ) -> None:
         mock_popen().communicate.return_value = [PHAB_DEFAULT_DATA, '']
         activated = self.finder.check_phabricator_activated('asdf')
         self.assertTrue(activated)
@@ -94,7 +96,9 @@ class TestFindLogReviewers(unittest.TestCase):
     def setUp(self) -> None:
         self.finder = reviewers.FindFileLogReviewers(reviewers.Config())
 
-    def check_extract_username_from_shortlog(self, shortlog: str, email: str, weight: int) -> None:
+    def check_extract_username_from_shortlog(
+        self, shortlog: str, email: str, weight: int
+    ) -> None:
         user_data = self.finder.extract_username_from_shortlog(shortlog)
         self.assertEqual(user_data, (email, weight))
 
@@ -121,7 +125,9 @@ class TestFindLogReviewers(unittest.TestCase):
     @patch('subprocess.run')
     def test_gets_reviewers(self, mock_run: MagicMock) -> None:
         changed_files = ['README.rst']
-        self.finder.get_changed_files = MagicMock(return_value=changed_files)  # type: ignore
+        self.finder.get_changed_files = (  # type: ignore
+            MagicMock(return_value=changed_files)
+        )
         process = MagicMock()
         git_shortlog = b'     3\tAlbert Wang <albertyw@uber.com>\n'
         git_shortlog += b'3\tAlbert Wang <example@gmail.com>\n'
@@ -138,7 +144,9 @@ class TestLogReviewers(unittest.TestCase):
 
     def test_get_changed_files(self) -> None:
         changed_files = ['README.rst', 'setup.py']
-        self.finder.run_command = MagicMock(return_value=changed_files)  # type: ignore
+        self.finder.run_command = (  # type: ignore
+            MagicMock(return_value=changed_files)
+        )
         files = self.finder.get_changed_files()
         self.assertEqual(files, ['README.rst', 'setup.py'])
 
@@ -150,7 +158,9 @@ class TestHistoricalReviewers(unittest.TestCase):
     def test_get_reviewers(self) -> None:
         counter = Counter()  # type: typing.Counter[str]
         mock_get_log_reviewers = MagicMock(return_value=counter)
-        self.finder.get_log_reviewers_from_file = mock_get_log_reviewers  # type: ignore
+        self.finder.get_log_reviewers_from_file = (  # type: ignore
+            mock_get_log_reviewers
+        )
         reviewers = self.finder.get_reviewers()
         self.assertEqual(counter, reviewers)
 
@@ -321,7 +331,9 @@ class TestMain(unittest.TestCase):
         self.assertEqual(mock_print.call_args[0][0], 'qwer')
 
     @patch('builtins.print')
-    def test_phabricator_disabled_reviewers(self, mock_print: MagicMock) -> None:
+    def test_phabricator_disabled_reviewers(
+        self, mock_print: MagicMock
+    ) -> None:
         counter = Counter({'asdf': 1, 'qwer': 1})
         get_reviewers = (
             'git_reviewers.reviewers.'

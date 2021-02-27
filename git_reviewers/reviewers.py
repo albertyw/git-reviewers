@@ -45,7 +45,9 @@ class FindReviewers():
             return email[:email.find('@')]
         return email
 
-    def check_phabricator_activated(self, username: str) -> subprocess.Popen[bytes]:
+    def check_phabricator_activated(
+        self, username: str
+    ) -> subprocess.Popen[bytes]:
         """ Check whether a phabricator user has been activated by """
         phab_command = ['arc', 'call-conduit', 'user.search']
         request = '{"constraints": {"usernames": ["%s"]}}' % username
