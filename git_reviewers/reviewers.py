@@ -45,7 +45,7 @@ class FindReviewers():
             return email[:email.find('@')]
         return email
 
-    def check_phabricator_activated(self, username: str) -> subprocess.Popen:
+    def check_phabricator_activated(self, username: str) -> subprocess.Popen[bytes]:
         """ Check whether a phabricator user has been activated by """
         phab_command = ['arc', 'call-conduit', 'user.search']
         request = '{"constraints": {"usernames": ["%s"]}}' % username
@@ -57,11 +57,11 @@ class FindReviewers():
         return process
 
     def parse_phabricator(self, username, process):
-        # type: (str, subprocess.Popen) -> str
+        # type: (str, subprocess.Popen[bytes]) -> str
         stdout, stderr = process.communicate()
         if process.returncode != 0:
-            print("stdout: %s" % stdout)
-            print("stderr: %s" % stderr)
+            print("stdout: %s" % stdout.decode("utf-8"))
+            print("stderr: %s" % stderr.decode("utf-8"))
             raise RuntimeError("Arc not able to call conduit")
         output_str = stdout.decode("utf-8").strip()
         phab_output = json.loads(output_str)
@@ -220,9 +220,9 @@ class Config():
     COPY_DEFAULT = None
     BASE_BRANCH_DEFAULT = 'master'
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.verbose = False
-        self.ignores = []
+        self.ignores: List[str] = []
         self.json = ''
         self.copy = False
         self.base_branch = 'master'

@@ -18,63 +18,63 @@ BASE_DIRECTORY = os.path.normpath(os.path.join(directory, '..', '..'))
 
 
 class TestFindReviewers(unittest.TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         self.finder = reviewers.FindReviewers(reviewers.Config())
         self.orig_reviewers_limit = reviewers.REVIEWERS_LIMIT
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         reviewers.REVIEWERS_LIMIT = self.orig_reviewers_limit
 
-    def test_get_reviewers(self):
+    def test_get_reviewers(self) -> None:
         with self.assertRaises(NotImplementedError):
             self.finder.get_reviewers()
 
     @patch('subprocess.run')
-    def test_run_command(self, mock_run):
+    def test_run_command(self, mock_run: MagicMock) -> None:
         mock_run().stdout = b'asdf'
         data = self.finder.run_command(['ls'])
         self.assertEqual(data, ['asdf'])
 
     @patch('subprocess.run')
-    def test_run_command_empty_response(self, mock_run):
+    def test_run_command_empty_response(self, mock_run: MagicMock) -> None:
         mock_run().stdout = b''
         data = self.finder.run_command([':'])
         self.assertEqual(data, [])
 
-    def check_extract_username(self, email, expected_user):
+    def check_extract_username(self, email: str, expected_user: str) -> None:
         user = self.finder.extract_username_from_email(email)
         self.assertEqual(user, expected_user)
 
-    def test_extract_username_from_generic_email(self):
+    def test_extract_username_from_generic_email(self) -> None:
         self.check_extract_username('asdf@gmail.com', 'asdf@gmail.com')
 
-    def test_extract_uber_username_from_email(self):
+    def test_extract_uber_username_from_email(self) -> None:
         self.check_extract_username('asdf@uber.com', 'asdf')
 
     @patch('subprocess.Popen')
-    def test_check_phabricator_activated(self, mock_popen):
+    def test_check_phabricator_activated(self, mock_popen: MagicMock) -> None:
         mock_popen().communicate.return_value = [PHAB_ACTIVATED_DATA, '']
         activated = self.finder.check_phabricator_activated('asdf')
         self.assertTrue(activated)
 
     @patch('subprocess.Popen')
-    def test_check_phabricator_activated_none(self, mock_popen):
+    def test_check_phabricator_activated_none(self, mock_popen: MagicMock) -> None:
         mock_popen().communicate.return_value = [PHAB_DEFAULT_DATA, '']
         activated = self.finder.check_phabricator_activated('asdf')
         self.assertTrue(activated)
 
-    def test_filter_phabricator_activated(self):
+    def test_filter_phabricator_activated(self) -> None:
         users = ['a', 'b', 'c', 'd']
         reviewers.REVIEWERS_LIMIT = 2
         self.mock_check_count = 0
 
-        def mock_check(u):
+        def mock_check(u: str) -> int:
             self.assertEqual(u, users[self.mock_check_count])
             self.mock_check_count += 1
             return self.mock_check_count - 1
         self.mock_parse_count = 0
 
-        def mock_parse(u, p):
+        def mock_parse(u: str, p: int) -> str:
             self.assertEqual(u, users[self.mock_parse_count])
             self.assertEqual(p, self.mock_parse_count)
             parse_return = ''
@@ -82,8 +82,8 @@ class TestFindReviewers(unittest.TestCase):
                 parse_return = u
             self.mock_parse_count += 1
             return parse_return
-        self.finder.check_phabricator_activated = mock_check
-        self.finder.parse_phabricator = mock_parse
+        self.finder.check_phabricator_activated = mock_check  # type: ignore
+        self.finder.parse_phabricator = mock_parse  # type: ignore
         filtered_usernames = self.finder.filter_phabricator_activated(users)
         self.assertEqual(self.mock_check_count, 3)
         self.assertEqual(self.mock_parse_count, 3)
@@ -91,14 +91,14 @@ class TestFindReviewers(unittest.TestCase):
 
 
 class TestFindLogReviewers(unittest.TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         self.finder = reviewers.FindFileLogReviewers(reviewers.Config())
 
-    def check_extract_username_from_shortlog(self, shortlog, email, weight):
+    def check_extract_username_from_shortlog(self, shortlog: str, email: str, weight: int) -> None:
         user_data = self.finder.extract_username_from_shortlog(shortlog)
         self.assertEqual(user_data, (email, weight))
 
-    def test_gets_generic_emails(self):
+    def test_gets_generic_emails(self) -> None:
         shortlog = '     3\tAlbert Wang <example@gmail.com>\n'
         self.check_extract_username_from_shortlog(
             shortlog,
@@ -106,22 +106,22 @@ class TestFindLogReviewers(unittest.TestCase):
             3,
         )
 
-    def test_gets_uber_emails(self):
+    def test_gets_uber_emails(self) -> None:
         shortlog = '     3\tAlbert Wang <albertyw@uber.com>\n'
         self.check_extract_username_from_shortlog(shortlog, 'albertyw', 3)
 
-    def test_gets_user_weight(self):
+    def test_gets_user_weight(self) -> None:
         shortlog = '     2\tAlbert Wang <albertyw@uber.com>\n'
         self.check_extract_username_from_shortlog(shortlog, 'albertyw', 2)
 
-    def test_get_changed_files(self):
+    def test_get_changed_files(self) -> None:
         with self.assertRaises(NotImplementedError):
             self.finder.get_changed_files()
 
     @patch('subprocess.run')
-    def test_gets_reviewers(self, mock_run):
+    def test_gets_reviewers(self, mock_run: MagicMock) -> None:
         changed_files = ['README.rst']
-        self.finder.get_changed_files = MagicMock(return_value=changed_files)
+        self.finder.get_changed_files = MagicMock(return_value=changed_files)  # type: ignore
         process = MagicMock()
         git_shortlog = b'     3\tAlbert Wang <albertyw@uber.com>\n'
         git_shortlog += b'3\tAlbert Wang <example@gmail.com>\n'
@@ -133,74 +133,74 @@ class TestFindLogReviewers(unittest.TestCase):
 
 
 class TestLogReviewers(unittest.TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         self.finder = reviewers.FindLogReviewers(reviewers.Config())
 
-    def test_get_changed_files(self):
+    def test_get_changed_files(self) -> None:
         changed_files = ['README.rst', 'setup.py']
-        self.finder.run_command = MagicMock(return_value=changed_files)
+        self.finder.run_command = MagicMock(return_value=changed_files)  # type: ignore
         files = self.finder.get_changed_files()
         self.assertEqual(files, ['README.rst', 'setup.py'])
 
 
 class TestHistoricalReviewers(unittest.TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         self.finder = reviewers.FindHistoricalReviewers(reviewers.Config())
 
-    def test_get_reviewers(self):
+    def test_get_reviewers(self) -> None:
         counter = Counter()  # type: typing.Counter[str]
         mock_get_log_reviewers = MagicMock(return_value=counter)
-        self.finder.get_log_reviewers_from_file = mock_get_log_reviewers
+        self.finder.get_log_reviewers_from_file = mock_get_log_reviewers  # type: ignore
         reviewers = self.finder.get_reviewers()
         self.assertEqual(counter, reviewers)
 
 
 class TestFindArcCommitReviewers(unittest.TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         self.finder = reviewers.FindArcCommitReviewers(reviewers.Config())
 
-    def test_no_reviewers(self):
+    def test_no_reviewers(self) -> None:
         log = ['asdf']
-        self.finder.run_command = MagicMock(return_value=log)
+        self.finder.run_command = MagicMock(return_value=log)  # type: ignore
         reviewers = self.finder.get_log_reviewers_from_file(['file'])
         self.assertEqual(reviewers, Counter())
 
-    def test_reviewers(self):
+    def test_reviewers(self) -> None:
         log = ['asdf', ' Reviewed By: asdf, qwer']
-        self.finder.run_command = MagicMock(return_value=log)
+        self.finder.run_command = MagicMock(return_value=log)  # type: ignore
         reviewers = self.finder.get_log_reviewers_from_file(['file'])
         self.assertEqual(reviewers, Counter({'asdf': 1, 'qwer': 1}))
 
-    def test_multiple_reviews(self):
+    def test_multiple_reviews(self) -> None:
         log = ['asdf', ' Reviewed By: asdf, qwer', 'Reviewed By: asdf']
-        self.finder.run_command = MagicMock(return_value=log)
+        self.finder.run_command = MagicMock(return_value=log)  # type: ignore
         reviewers = self.finder.get_log_reviewers_from_file(['file'])
         self.assertEqual(reviewers, Counter({'asdf': 2, 'qwer': 1}))
 
 
 class TestShowReviewers(unittest.TestCase):
     @patch('builtins.print')
-    def test_show_reviewers(self, mock_print):
+    def test_show_reviewers(self, mock_print: MagicMock) -> None:
         usernames = ['asdf', 'albertyw']
         reviewers.show_reviewers(usernames, False)
         mock_print.assert_called_with('asdf, albertyw')
 
     @patch('subprocess.Popen')
-    def test_copy_reviewers(self, mock_popen):
-        usernames = Counter({'albertyw': 1, 'asdf': 2})
+    def test_copy_reviewers(self, mock_popen: MagicMock) -> None:
+        usernames = ['asdf', 'albertyw']
         reviewers.show_reviewers(usernames, True)
         self.assertTrue(mock_popen.called)
 
     @patch('subprocess.Popen')
-    def test_copy_reviewers_no_pbcopy(self, mock_popen):
-        usernames = Counter({'albertyw': 1, 'asdf': 2})
+    def test_copy_reviewers_no_pbcopy(self, mock_popen: MagicMock) -> None:
+        usernames = ['asdf', 'albertyw']
         mock_popen.side_effect = FileNotFoundError
         reviewers.show_reviewers(usernames, True)
 
 
 class TestGetReviewers(unittest.TestCase):
     @patch('builtins.print')
-    def test_verbose_reviewers(self, mock_print):
+    def test_verbose_reviewers(self, mock_print: MagicMock) -> None:
         config = reviewers.Config()
         config.verbose = True
         counter = Counter({'asdf': 1, 'qwer': 1})
@@ -228,7 +228,7 @@ class TestGetReviewers(unittest.TestCase):
 
 
 class TestConfig(unittest.TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         self.config = reviewers.Config()
         self.config_file = tempfile.NamedTemporaryFile('w')
         self.mock_args = MagicMock()
@@ -237,27 +237,27 @@ class TestConfig(unittest.TestCase):
         self.mock_args.json = ''
         self.mock_args.copy = None
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         self.config_file.close()
 
-    def test_default_global_json(self):
+    def test_default_global_json(self) -> None:
         expected_path = os.path.expanduser("~") + "/.git/reviewers"
         json_path = reviewers.Config.default_global_json()
         self.assertEqual(json_path, expected_path)
 
-    def test_read_configs_args(self):
+    def test_read_configs_args(self) -> None:
         self.mock_args.verbose = True
         self.config.read_configs(self.mock_args)
         self.assertTrue(self.config.verbose)
         self.assertEqual(self.config.ignores, [])
         self.assertFalse(self.config.copy)
 
-    def test_read_configs_copy(self):
+    def test_read_configs_copy(self) -> None:
         self.mock_args.copy = True
         self.config.read_configs(self.mock_args)
         self.assertTrue(self.config.copy)
 
-    def test_read_json(self):
+    def test_read_json(self) -> None:
         self.mock_args.ignore = 'a,b'
         self.mock_args.json = self.config_file.name
         config_file_data = {'verbose': True, 'ignore': ['c', 'd']}
@@ -267,7 +267,7 @@ class TestConfig(unittest.TestCase):
         self.assertTrue(self.config.verbose)
         self.assertEqual(set(self.config.ignores), set(['a', 'b', 'c', 'd']))
 
-    def test_read_malformed_json(self):
+    def test_read_malformed_json(self) -> None:
         self.mock_args.ignore = 'a,b'
         self.mock_args.json = self.config_file.name
         self.config_file.write('')
@@ -275,7 +275,7 @@ class TestConfig(unittest.TestCase):
         self.config.read_configs(self.mock_args)
         self.assertEqual(set(self.config.ignores), set(['a', 'b']))
 
-    def test_read_unusable(self):
+    def test_read_unusable(self) -> None:
         self.mock_args.ignore = 'a,b'
         self.mock_args.json = self.config_file.name
         self.config_file.write("[]")
@@ -286,13 +286,13 @@ class TestConfig(unittest.TestCase):
 
 class TestMain(unittest.TestCase):
     @patch('builtins.print')
-    def test_main(self, mock_print):
+    def test_main(self, mock_print: MagicMock) -> None:
         with patch.object(sys, 'argv', ['reviewers.py']):
             reviewers.main()
         self.assertTrue(mock_print.called)
 
     @patch('argparse.ArgumentParser._print_message')
-    def test_version(self, mock_print):
+    def test_version(self, mock_print: MagicMock) -> None:
         with patch.object(sys, 'argv', ['reviewers.py', '-v']):
             with self.assertRaises(SystemExit):
                 reviewers.main()
@@ -301,7 +301,7 @@ class TestMain(unittest.TestCase):
         self.assertEqual(mock_print.call_args[0][0], version)
 
     @patch('builtins.print')
-    def test_ignore_reviewers(self, mock_print):
+    def test_ignore_reviewers(self, mock_print: MagicMock) -> None:
         counter = Counter({'asdf': 1, 'qwer': 1})
         get_reviewers = (
             'git_reviewers.reviewers.'
@@ -321,7 +321,7 @@ class TestMain(unittest.TestCase):
         self.assertEqual(mock_print.call_args[0][0], 'qwer')
 
     @patch('builtins.print')
-    def test_phabricator_disabled_reviewers(self, mock_print):
+    def test_phabricator_disabled_reviewers(self, mock_print: MagicMock) -> None:
         counter = Counter({'asdf': 1, 'qwer': 1})
         get_reviewers = (
             'git_reviewers.reviewers.'
