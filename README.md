@@ -93,10 +93,12 @@ Development
 -----------
 
 ```bash
+python setup.py develop
 pip install -r requirements-test.txt
-coverage run setup.py test
-coverage report
 flake8
+mypy . --strict --ignore-missing-imports
+coverage run -m unittest
+coverage report -m
 ```
 
 Publishing
