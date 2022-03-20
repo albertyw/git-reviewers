@@ -25,7 +25,17 @@ steps:
     environment:
       CC_TEST_REPORTER_ID: 4376447242698573f009af93594132883f11a7c877b87b02563ffddd4949e88b
 
+  - name: Test Python Packaging
+    image: python:3.10
+    commands:
+      - pip install twine
+      - python setup.py sdist bdist_wheel
+      - twine check --strict dist/*
+
   - name: Upload Python
+    depends_on:
+      - Test Python
+      - Test Python Packaging
     image: python:3.10
     commands:
       - pip install twine
