@@ -59,7 +59,7 @@ setup(
     cmdclass={},
 
     package_data={"git_reviewers": ["py.typed"]},
-    packages=find_packages("git_reviewers", exclude=["tests"]),
+    packages=find_packages(exclude=["tests"]),
 
     py_modules=["git_reviewers.reviewers"],
 
