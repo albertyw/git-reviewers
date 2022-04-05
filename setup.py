@@ -58,7 +58,7 @@ setup(
     # $ setup.py publish support.
     cmdclass={},
 
-    package_data={"git_browse": ["py.typed"]},
+    package_data={"git_reviewers": ["py.typed"]},
     packages=find_packages("git_reviewers", exclude=["tests"]),
 
     py_modules=["git_reviewers.reviewers"],
