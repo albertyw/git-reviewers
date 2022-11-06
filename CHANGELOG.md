@@ -1,6 +1,14 @@
 CHANGELOG.md
 ============
 
+v0.13.4 (2022-11-05)
+--------------------
+
+ - Update tests
+ - Update dependencies
+ - Support python 3.10 and 3.11; drop support for python 3.5 and 3.6
+
+
 v0.13.3 (2020-01-03)
 --------------------
 
