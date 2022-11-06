@@ -9,7 +9,7 @@ volumes:
 
 steps:
   - name: Test Python
-    image: python:3.10
+    image: python:3.11
     commands:
       - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > "${HOME}/bin/cc-test-reporter"
       - chmod +x "${HOME}/bin/cc-test-reporter"
@@ -26,7 +26,7 @@ steps:
       CC_TEST_REPORTER_ID: 4376447242698573f009af93594132883f11a7c877b87b02563ffddd4949e88b
 
   - name: Test Python Packaging
-    image: python:3.10
+    image: python:3.11
     commands:
       - pip install twine
       - python setup.py sdist bdist_wheel
@@ -36,7 +36,7 @@ steps:
     depends_on:
       - Test Python
       - Test Python Packaging
-    image: python:3.10
+    image: python:3.11
     commands:
       - pip install twine
       - python setup.py sdist bdist_wheel
