@@ -3,7 +3,7 @@ import os
 import json
 import sys
 import tempfile
-import typing
+import typing  # NOQA
 import unittest
 from unittest.mock import patch, MagicMock
 
