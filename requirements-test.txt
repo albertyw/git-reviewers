@@ -1,4 +1,4 @@
 # Testing
 coverage==7.2.6                  # Test coverage
-flake8==6.0.0                    # Python linting
+ruff==0.0.272                    # Python linting
 mypy==1.3.0                      # Static typing
