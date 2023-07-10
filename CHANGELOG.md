@@ -1,6 +1,13 @@
 CHANGELOG.md
 ============
 
+v0.13.5 (2023-07-10)
+--------------------
+
+ - Update dependencies
+ - Refactor development and CI configuration
+
+
 v0.13.4 (2022-11-05)
 --------------------
 
