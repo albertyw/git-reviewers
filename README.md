@@ -96,7 +96,7 @@ Development
 python setup.py develop
 pip install -r requirements-test.txt
 ruff check .
-mypy . --strict --ignore-missing-imports
+mypy .
 coverage run -m unittest
 coverage report -m
 ```

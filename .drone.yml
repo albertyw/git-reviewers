@@ -11,7 +11,7 @@ steps:
       - python setup.py develop
       - pip install -r requirements-test.txt
       - ruff check .
-      - mypy . --strict --ignore-missing-imports --exclude build
+      - mypy .
       - cc-test-reporter before-build
       - coverage run -m unittest
       - exitcode="$?"
