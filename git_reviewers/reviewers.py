@@ -256,7 +256,7 @@ class Config():
             config = json.loads(config_data)
         except (FileNotFoundError, json.decoder.JSONDecodeError):
             return
-        if type(config) is not dict:
+        if not isinstance(config, dict):
             return
 
         self.verbose = config.get('verbose', self.verbose)
