@@ -8,7 +8,6 @@ steps:
     commands:
       - curl -L "https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-$(dpkg --print-architecture)" > "${HOME}/bin/cc-test-reporter"
       - chmod +x "${HOME}/bin/cc-test-reporter"
-      - python setup.py develop
       - pip install -r requirements-test.txt
       - ruff check .
       - mypy .
@@ -23,8 +22,8 @@ steps:
   - name: Test Python Packaging
     image: python:3.12
     commands:
-      - pip install twine
-      - python setup.py sdist bdist_wheel
+      - pip install twine build
+      - python -m build
       - twine check --strict dist/*
 
   - name: Upload Python
@@ -38,8 +37,8 @@ steps:
         from_secret: twine_password
     image: python:3.12
     commands:
-      - pip install twine
-      - python setup.py sdist bdist_wheel
+      - pip install twine build
+      - python -m build
       - twine upload dist/*
     when:
       event:

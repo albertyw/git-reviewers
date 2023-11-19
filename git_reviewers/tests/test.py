@@ -143,12 +143,12 @@ class TestLogReviewers(unittest.TestCase):
         self.finder = reviewers.FindLogReviewers(reviewers.Config())
 
     def test_get_changed_files(self) -> None:
-        changed_files = ['README.rst', 'setup.py']
+        changed_files = ['README.rst', 'pyproject.toml']
         self.finder.run_command = (  # type: ignore
             MagicMock(return_value=changed_files)
         )
         files = self.finder.get_changed_files()
-        self.assertEqual(files, ['README.rst', 'setup.py'])
+        self.assertEqual(files, ['README.rst', 'pyproject.toml'])
 
 
 class TestHistoricalReviewers(unittest.TestCase):

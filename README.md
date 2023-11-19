@@ -93,7 +93,6 @@ Development
 -----------
 
 ```bash
-python setup.py develop
 pip install -r requirements-test.txt
 ruff check .
 mypy .
@@ -106,7 +105,7 @@ Publishing
 
 ```bash
 pip install twine
-python setup.py sdist bdist_wheel
+python -m build
 twine upload dist/*
 ```
 
