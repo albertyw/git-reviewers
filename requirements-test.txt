@@ -1,4 +1,4 @@
 # Testing
-coverage==7.3.2                  # Test coverage
-ruff==0.1.0                      # Python linting
-mypy==1.6.0                      # Static typing
+coverage==7.4.1                  # Test coverage
+ruff==0.2.0                      # Python linting
+mypy==1.8.0                      # Static typing
