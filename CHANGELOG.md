@@ -1,6 +1,14 @@
 CHANGELOG.md
 ============
 
+v0.13.6 (2024-04-23)
+--------------------
+
+ - Officially support python 3.12
+ - Update dependencies
+ - Switch from setuptools to pyproject
+
+
 v0.13.5 (2023-07-10)
 --------------------
 
