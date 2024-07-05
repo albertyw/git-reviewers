@@ -6,7 +6,6 @@ git-reviewers
 
 
 [![Build Status](https://drone.albertyw.com/api/badges/albertyw/git-reviewers/status.svg)](https://drone.albertyw.com/albertyw/git-reviewers)
-[![Updates](https://pyup.io/repos/github/albertyw/git-reviewers/shield.svg)](https://pyup.io/repos/github/albertyw/git-reviewers/)
 [![Maintainability](https://api.codeclimate.com/v1/badges/58c63ec99d395f0f8df6/maintainability)](https://codeclimate.com/github/albertyw/git-reviewers/maintainability)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/58c63ec99d395f0f8df6/test_coverage)](https://codeclimate.com/github/albertyw/git-reviewers/test_coverage)
 
