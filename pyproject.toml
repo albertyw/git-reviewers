@@ -47,7 +47,7 @@ readme = {file = "README.md", content-type="text/markdown"}
 git_reviewers = ["py.typed"]
 
 [tool.ruff]
-lint.select = ["E", "F", "B"]
+lint.select = ["E", "F", "W", "A", "B", "COM", "N", "PLC", "PLE", "PLW"]
 lint.ignore = ["B010"]
 
 [tool.mypy]

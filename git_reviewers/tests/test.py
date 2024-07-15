@@ -59,7 +59,7 @@ class TestFindReviewers(unittest.TestCase):
 
     @patch('subprocess.Popen')
     def test_check_phabricator_activated_none(
-        self, mock_popen: MagicMock
+        self, mock_popen: MagicMock,
     ) -> None:
         mock_popen().communicate.return_value = [PHAB_DEFAULT_DATA, '']
         activated = self.finder.check_phabricator_activated('asdf')
@@ -97,7 +97,7 @@ class TestFindLogReviewers(unittest.TestCase):
         self.finder = reviewers.FindFileLogReviewers(reviewers.Config())
 
     def check_extract_username_from_shortlog(
-        self, shortlog: str, email: str, weight: int
+        self, shortlog: str, email: str, weight: int,
     ) -> None:
         user_data = self.finder.extract_username_from_shortlog(shortlog)
         self.assertEqual(user_data, (email, weight))
@@ -233,7 +233,7 @@ class TestGetReviewers(unittest.TestCase):
         self.assertEqual(
             mock_print.call_args[0][0],
             'Reviewers from FindArcCommitReviewers: %s' %
-            "{'asdf': 1, 'qwer': 1}"
+            "{'asdf': 1, 'qwer': 1}",
         )
 
 
@@ -332,7 +332,7 @@ class TestMain(unittest.TestCase):
 
     @patch('builtins.print')
     def test_phabricator_disabled_reviewers(
-        self, mock_print: MagicMock
+        self, mock_print: MagicMock,
     ) -> None:
         counter = Counter({'asdf': 1, 'qwer': 1})
         get_reviewers = (

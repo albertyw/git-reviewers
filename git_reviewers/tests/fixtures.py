@@ -4,8 +4,8 @@ from typing import Dict, Any
 
 PHAB_DEFAULT: Dict[str, Dict[str, Any]] = {
     'response': {
-        'data': []
-    }
+        'data': [],
+    },
 }
 
 PHAB_ACTIVATED = copy.deepcopy(PHAB_DEFAULT)
