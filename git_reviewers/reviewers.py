@@ -32,7 +32,7 @@ class FindReviewers():
 
     def run_command(self, command: List[str]) -> List[str]:
         """ Wrapper for running external subprocesses """
-        process = subprocess.run(command, stdout=subprocess.PIPE)
+        process = subprocess.run(command, stdout=subprocess.PIPE, check=False)
         data = process.stdout.decode("utf-8").strip()
         if data:
             return data.split('\n')
@@ -85,9 +85,9 @@ class FindReviewers():
         if len(usernames) < REVIEWERS_LIMIT:
             for username in all_users[REVIEWERS_LIMIT:]:
                 check_proc = self.check_phabricator_activated(username)
-                username = self.parse_phabricator(username, check_proc)
-                if username:
-                    usernames.append(username)
+                parsed_username = self.parse_phabricator(username, check_proc)
+                if parsed_username:
+                    usernames.append(parsed_username)
                     if len(usernames) >= REVIEWERS_LIMIT:
                         break
         return usernames
@@ -157,10 +157,10 @@ class FindArcCommitReviewers(FindLogReviewers):
         git_commit_messages = self.run_command(command)
         reviewers_identifier = 'Reviewed By: '
         reviewers = Counter()  # type: typing.Counter[str]
-        for line in git_commit_messages:
-            if reviewers_identifier not in line:
+        for raw_line in git_commit_messages:
+            if reviewers_identifier not in raw_line:
                 continue
-            line = line.replace(reviewers_identifier, '')
+            line = raw_line.replace(reviewers_identifier, '')
             line_reviewers = line.split(', ')
             line_reviewers = [r.strip() for r in line_reviewers]
             reviewers.update(line_reviewers)
