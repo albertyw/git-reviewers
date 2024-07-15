@@ -46,7 +46,7 @@ class FindReviewers():
         return email
 
     def check_phabricator_activated(
-        self, username: str
+        self, username: str,
     ) -> subprocess.Popen[bytes]:
         """ Check whether a phabricator user has been activated by """
         phab_command = ['arc', 'call-conduit', 'user.search']
@@ -178,7 +178,7 @@ def show_reviewers(reviewer_list, copy_clipboard):
     try:
         p = subprocess.Popen(
             ['pbcopy', 'w'],
-            stdin=subprocess.PIPE, close_fds=True
+            stdin=subprocess.PIPE, close_fds=True,
         )
         p.communicate(input=reviewer_string.encode('utf-8'))
     except FileNotFoundError:
@@ -191,7 +191,7 @@ def get_reviewers(config):  # type: (Config) -> List[str]
     finders = [
         FindLogReviewers,
         FindHistoricalReviewers,
-        FindArcCommitReviewers
+        FindArcCommitReviewers,
     ]
     reviewers = Counter()  # type: typing.Counter[str]
     for finder in finders:
@@ -199,7 +199,7 @@ def get_reviewers(config):  # type: (Config) -> List[str]
         if config.verbose:
             print(
                 "Reviewers from %s: %s" %
-                (finder.__name__, dict(finder_reviewers))
+                (finder.__name__, dict(finder_reviewers)),
             )
         reviewers.update(finder_reviewers)
         if finder == FindArcCommitReviewers and finder_reviewers:
