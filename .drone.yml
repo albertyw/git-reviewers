@@ -20,7 +20,7 @@ steps:
       CC_TEST_REPORTER_ID: 4376447242698573f009af93594132883f11a7c877b87b02563ffddd4949e88b
 
   - name: Test Python Packaging
-    image: python:3.12
+    image: python:3.13
     commands:
       - pip install twine build
       - python -m build
