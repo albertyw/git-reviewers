@@ -1,6 +1,14 @@
 CHANGELOG.md
 ============
 
+v0.13.7 (2024-11-10)
+--------------------
+
+ - Officially support python 3.13
+ - Update dependencies
+ - Fix python lint issues
+
+
 v0.13.6 (2024-04-23)
 --------------------
 
