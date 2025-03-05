@@ -31,7 +31,7 @@ test = [
     # Testing
     "coverage==7.6.12",       # Test coverage
     "ruff==0.6.7",            # Python linting
-    "mypy==1.11.2",           # Static typing
+    "mypy==1.15.0",           # Static typing
 ]
 
 [project.urls]
