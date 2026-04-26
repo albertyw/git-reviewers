@@ -40,11 +40,14 @@ test = [
 [project.scripts]
 git_reviewers = "git_reviewers.reviewers:main"
 
+[tool.setuptools]
+packages = ["git_reviewers"]
+
 [tool.setuptools.dynamic]
 version = {attr = "git_reviewers.reviewers.__version__"}
 readme = {file = "README.md", content-type="text/markdown"}
 
-[options.package_data]
+[tool.setuptools.package-data]
 git_reviewers = ["py.typed"]
 
 [tool.ruff]
