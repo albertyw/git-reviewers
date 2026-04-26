@@ -1,6 +1,13 @@
 CHANGELOG.md
 ============
 
+v0.13.8 (2026-04-26)
+--------------------
+
+- Update dependencies
+- Officially support python 3.14
+
+
 v0.13.7 (2024-11-10)
 --------------------
 
