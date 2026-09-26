@@ -36,6 +36,10 @@ test = [
 
 [project.urls]
 "Homepage" = "https://github.com/albertyw/git-reviewers"
+"Repository" = "https://github.com/albertyw/git-reviewers"
+"Documentation" = "https://github.com/albertyw/git-reviewers/blob/master/README.md"
+"Changelog" = "https://github.com/albertyw/git-reviewers/blob/master/CHANGELOG.md"
+"Issues" = "https://github.com/albertyw/git-reviewers/issues"
 
 [project.scripts]
 git_reviewers = "git_reviewers.reviewers:main"
